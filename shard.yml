@@ -1,0 +1,9 @@
+name: phoenix
+version: 0.1.0
+
+authors:
+  - David Cristofaro <david@dtcristo.com>
+
+crystal: 0.23.1
+
+license: MIT
