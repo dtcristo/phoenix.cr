@@ -34,7 +34,7 @@ module Phoenix
     end
 
     # Cancels any previous `schedule_timeout` and schedules callback
-    def schedule_timeout
+    def schedule_timeout(repeat = false)
       @active_timeouts[@current_id] = false
       id = @current_id += 1
       @active_timeouts[id] = true
@@ -43,6 +43,7 @@ module Phoenix
         if @active_timeouts[id]
           @tries += 1
           @callback.call()
+          schedule_timeout(repeat) if repeat
         end
       end
       # yield immediately to start the timer ticking
