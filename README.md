@@ -2,6 +2,8 @@
 
 TODO: Write a description here
 
+Based off: https://github.com/phoenixframework/phoenix/blob/5ec246543e0950e10eab52aba333b644767c885e/assets/js/phoenix.js
+
 ## Installation
 
 Add this to your application's `shard.yml`:
