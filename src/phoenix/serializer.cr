@@ -6,5 +6,6 @@ module Phoenix
 
     def self.decode(raw_payload : String) : Message
       Message.from_json(raw_payload)
+    end
   end
 end
