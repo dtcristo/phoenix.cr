@@ -3,31 +3,41 @@ module Phoenix
     getter :ref, :timeout
     @ref : String?
     @ref_event : String?
-    @received_resp : NamedTuple(status: String, response: String)?
+    @received_resp : JSON::Any?
 
-    def initialize(@channel : Channel, @event : String, payload : Hash(Symbol, String)?, @timeout : UInt32)
-      @payload = payload || {} of Symbol => String
+    def initialize(@channel : Channel, @event : String, payload : JSON::Any, @timeout : UInt32)
+      @payload = payload || JSON::Any.new(nil)
       # @received_resp : String? = nil
       # @timeout_timer : String? = nil
-      @rec_hooks = [] of NamedTuple(status: String, callback: String ->)
+      @rec_hooks = [] of NamedTuple(status: String, callback: JSON::Any ->)
       @sent = false
     end
 
-    def resend(timeout)
-      @timeout = timeout
+    def resend(@timeout)
       reset()
       send()
     end
 
     def send
-      raise "before has_received?"
       return if has_received?("timeout")
-      raise "in send"
+      start_timeout()
+      @sent = true
+      @ref.try do |ref|
+        @channel.socket.push(Message.new({
+          topic: @channel.topic,
+          event: @event,
+          payload: @payload,
+          ref: ref,
+          join_ref: @channel.join_ref()
+        }))
+        return
+      end
+      raise "ref is nil, handle this"
     end
 
-    def receive(status, &callback : String ->)
+    def receive(status, &callback : JSON::Any ->)
       if has_received?(status)
-        @received_resp.try {|resp| yield(resp[:response])}
+        @received_resp.try { |resp| yield(resp["response"]) }
         # yield(@received_resp[:response])
       end
       @rec_hooks << { status: status, callback: callback }
@@ -42,8 +52,8 @@ module Phoenix
       @sent = false
     end
 
-    def match_receive(status, response, ref)
-      @rec_hooks.reject { |h| h[:status] == status }.each(&.callback(response))
+    def match_receive(payload)
+      @rec_hooks.reject { |h| h[:status] == payload["status"] }.each(&.[:callback].call(payload["response"]))
     end
 
     def cancel_ref_event
@@ -58,32 +68,35 @@ module Phoenix
 
     def start_timeout()
       cancel_timeout()
-      @ref = @channel.socket.make_ref()
-      @ref_event = @channel.reply_event_name(@ref)
+      @ref = ref = @channel.socket.make_ref()
+      @ref_event = ref_event = @channel.reply_event_name(ref)
 
-      @channel.on @ref_event do |payload|
+      @channel.on ref_event do |payload|
         cancel_ref_event()
         cancel_timeout()
         @received_resp = payload
         match_receive(payload)
       end
 
-      @timeout_timer = Timer.new(
-        trigger("timeout", ""),
+      @timeout_timer = timeout_timer = Timer.new(
+        -> { trigger("timeout", nil) },
         @timeout
       )
-      @timeout_timer.schedule_timeout()
+      timeout_timer.schedule_timeout()
     end
 
     def has_received?(status)
       @received_resp.try do |received_resp|
-        return received_resp[:status] == status
+        return received_resp["status"] == status
       end
       false
     end
 
+    # TODO: Check this method
     def trigger(status, response)
-      @channel.trigger(@ref_event, { status: status, response: response })
+      @ref.try do |ref|
+        @channel.trigger(@ref_event, { status: status, response: response }, ref)
+      end
     end
   end
 end
