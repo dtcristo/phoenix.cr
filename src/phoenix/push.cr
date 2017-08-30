@@ -53,7 +53,9 @@ module Phoenix
     end
 
     def match_receive(payload)
-      @rec_hooks.reject { |h| h[:status] == payload["status"] }.each(&.[:callback].call(payload["response"]))
+      @rec_hooks
+        .select { |h| h[:status] == payload["status"]? }
+        .each(&.[:callback].call(payload["response"]))
     end
 
     def cancel_ref_event
@@ -87,16 +89,13 @@ module Phoenix
 
     def has_received?(status)
       @received_resp.try do |received_resp|
-        return received_resp["status"] == status
+        return received_resp["status"]? == status
       end
       false
     end
 
-    # TODO: Check this method
     def trigger(status, response)
-      @ref.try do |ref|
-        @channel.trigger(@ref_event, { status: status, response: response }, ref)
-      end
+      @channel.trigger(@ref_event, JSON::Any.new({ "status" => status.as(JSON::Type), "response" => response.as(JSON::Type) }.as(JSON::Type)), @ref, nil)
     end
   end
 end
