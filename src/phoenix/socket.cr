@@ -108,7 +108,7 @@ module Phoenix
     end
 
     def remove(channel : Channel)
-      @channels = @channels.reject { |c| c.join_ref == channel.join_ref }
+      @channels = @channels.reject { |c| c.join_ref() == channel.join_ref() }
     end
 
     # Initiates a new channel for the given topic
@@ -116,8 +116,7 @@ module Phoenix
     # ```
     # channel = socket.channel("topic:subtopic")
     # ```
-    def channel(topic : String, params = {} of Symbol => String)
-      puts "channel"
+    def channel(topic : String, params = JSON::Any.new(({} of String => JSON::Type).as(JSON::Type)))
       chan = Channel.new(topic, params, self)
       chan.setup()
       channels << chan
@@ -159,7 +158,7 @@ module Phoenix
     end
 
     private def on_conn_binary(data)
-      raise "trigger_chan_error"
+      raise "on_conn_binary"
     end
 
     private def trigger_chan_error
