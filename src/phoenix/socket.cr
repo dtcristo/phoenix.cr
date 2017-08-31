@@ -108,7 +108,7 @@ module Phoenix
     end
 
     def remove(channel : Channel)
-      @channels = @channels.reject { |c| c.join_ref() == channel.join_ref() }
+      @channels = @channels.select { |c| c.join_ref() != channel.join_ref() }
     end
 
     # Initiates a new channel for the given topic
@@ -154,7 +154,13 @@ module Phoenix
       if msg.ref == @pending_heartbeat_ref
         @pending_heartbeat_ref = nil
       end
-      log("receive", "#{msg.payload["status"]} #{msg.topic} #{msg.event} (#{msg.ref})", data: msg.payload.raw)
+      status = msg.payload["status"]?
+      ref = msg.ref
+      log("receive", "#{status && "#{status} "}#{msg.topic} #{msg.event}#{ref && " (#{ref})"}", data: msg.payload.raw)
+      @channels
+        .select(&.member?(msg.topic, msg.event, msg.payload, msg.join_ref))
+        .each(&.trigger(msg.event, msg.payload, msg.ref, msg.join_ref))
+      @state_change_callbacks[:message].each(&.call(event))
     end
 
     private def on_conn_binary(data)
@@ -166,10 +172,16 @@ module Phoenix
     end
 
     def push(msg : Message)
-      encoded = @encode.call(msg)
-      log("push", "#{msg.topic} #{msg.event} (#{msg.join_ref}, #{msg.ref})", msg.payload.raw)
-      @conn.try(&.send(encoded))
-      raise "socket push"
+      callback = Proc(Nil).new do
+        encoded = @encode.call(msg)
+        @conn.try(&.send(encoded))
+      end
+      log("push", "#{msg.topic} #{msg.event} (#{msg.join_ref || "nil"}, #{msg.ref})", msg.payload.raw)
+      if connected?
+        callback.call()
+      else
+        @send_buffer << callback
+      end
     end
 
     # Return the next message ref
@@ -194,7 +206,6 @@ module Phoenix
     end
 
     private def flush_send_buffer
-      puts "flushing send buffer - connected = #{connected?}, (#{@send_buffer.size})"
       if connected? && @send_buffer.size > 0
         @send_buffer.each(&.call())
         @send_buffer = [] of ->
