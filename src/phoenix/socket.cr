@@ -200,14 +200,13 @@ module Phoenix
       end
       pending_heartbeat_ref = make_ref()
       @pending_heartbeat_ref = pending_heartbeat_ref
-      msg = Message.new(
+      push(Message.new(
         "phoenix",
         "heartbeat",
         JSON::Any.new(nil),
         pending_heartbeat_ref,
         nil
-      )
-      push(msg)
+      ))
     end
 
     private def flush_send_buffer
