@@ -200,8 +200,13 @@ module Phoenix
       end
       pending_heartbeat_ref = make_ref()
       @pending_heartbeat_ref = pending_heartbeat_ref
-      msg = Message.new("phoenix", "heartbeat", JSON::Any.new(nil), pending_heartbeat_ref, nil)
-      # push({ topic: "phoenix", event: "heartbeat", payload: {} of String => String, ref: pending_heartbeat_ref, join_ref: nil })
+      msg = Message.new(
+        "phoenix",
+        "heartbeat",
+        JSON::Any.new(nil),
+        pending_heartbeat_ref,
+        nil
+      )
       push(msg)
     end
 

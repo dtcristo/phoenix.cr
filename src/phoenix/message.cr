@@ -2,10 +2,6 @@ require "json"
 
 module Phoenix
   struct Message
-    def initialize(params : NamedTuple(topic: String, event: String, payload: JSON::Any, ref: String, join_ref: String?))
-      initialize(params[:topic], params[:event], params[:payload], params[:ref], params[:join_ref])
-    end
-
     def initialize(@topic : String, @event : String, @payload : JSON::Any, @ref : String, @join_ref : String?)
     end
 
