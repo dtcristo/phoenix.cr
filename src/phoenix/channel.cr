@@ -14,7 +14,7 @@ module Phoenix
 
     def initialize(@topic : String, @params : JSON::Any, @socket : Socket)
       @state = State::Closed
-      @bindings = [] of NamedTuple(event: String, ref: UInt32, callback: JSON::Any ->)
+      @bindings = [] of NamedTuple(event: String, ref: UInt32, callback: (JSON::Any, String?, String?) ->)
       @binding_ref = 0_u32
       @timeout = @socket.timeout
       @joined_once = false
@@ -61,9 +61,9 @@ module Phoenix
         @rejoin_timer.schedule_timeout()
       end
 
-      # on CHANNEL_EVENTS[:reply] do |payload, ref|
-      #   trigger(reply_event_name(ref), payload)
-      # end
+      on CHANNEL_EVENTS[:reply] do |payload, ref|
+        trigger(reply_event_name(ref || "TODO"), payload, ref, nil)
+      end
     end
 
     def rejoin_until_connected
@@ -88,10 +88,10 @@ module Phoenix
 
     # Hook into channel close
     def on_close(&block : ->)
-      on(CHANNEL_EVENTS[:close], &->(payload : JSON::Any) { block.call() })
+      on(CHANNEL_EVENTS[:close], &->(payload : JSON::Any, ref : String?, join_ref : String?) { block.call() })
     end
 
-    def on_error(&block : String? ->)
+    def on_error(&block : JSON::Any, String?, String? ->)
       on(CHANNEL_EVENTS[:error], &block)
     end
 
@@ -111,20 +111,34 @@ module Phoenix
     # ```
     # Since unsubscription, "do stuff" won't run,
     # while "do other stuff" will still run on the "event".
-    def on(event : String, &block : JSON::Any ->)
+    def on(event : String, &block : (JSON::Any, String?, String?) ->)
       ref = @binding_ref += 1
       @bindings << { event: event, ref: ref, callback: block }
       ref
     end
 
     def off(event, ref = nil)
-      @bindings = @bindings.reject do |bind|
+      @bindings = @bindings.select do |bind|
         !(bind[:event] == event && (ref.nil? || ref == bind[:ref]))
       end
     end
 
-    def push(event, payload, timeout = @timeout)
-      raise "channel push"
+    def can_push?
+      @socket.connected? && @state.joined?
+    end
+
+    def push(event : String, payload : JSON::Any, timeout : UInt32 = @timeout)
+      unless @joined_once
+        raise "tried to push '#{event}' to '#{@topic}' before joining. Use channel.join() before pushing events"
+      end
+      push_event = Push.new(self, event, payload, timeout)
+      if can_push?
+        push_event.send()
+      else
+        push_event.start_timeout()
+        @push_buffer << push_event
+      end
+      push_event
     end
 
     def leave(timeout = @timeout)
@@ -135,8 +149,22 @@ module Phoenix
       payload
     end
 
-    def member?(topic, event, payload, join_ref)
-      raise "member?"
+    def member?(topic : String, event : String, payload : JSON::Any, _join_ref : String?) : Bool
+      return false unless @topic == topic
+      _join_ref.try do |__join_ref|
+        if CHANNEL_LIFECYCLE_EVENTS.includes?(event) && __join_ref != join_ref()
+          # TODO: Log this better
+          # @socket.log("channel", "dropping outdated message", {
+          #   "topic" => topic,
+          #   "event" => event,
+          #   "payload" => payload,
+          #   "join_ref" => join_ref
+          # })
+          @socket.log("channel", "dropping outdated message")
+          return false
+        end
+      end
+      true
     end
 
     def join_ref
@@ -154,11 +182,13 @@ module Phoenix
     end
 
     # def trigger(event, payload, ref, join_ref)
-    def trigger(event, payload, ref)
+    def trigger(event, payload, ref, _join_ref)
       handled_payload = on_message(event, payload, ref)
-      # @bindings
-      #   .reject { |bind| bind[:event] == event }
-      #   .map(&.[:callback].call(handled_payload, ref))
+      # puts "triggerd on #{event}"
+      # puts "bindings: #{@bindings.map { |bind| "#{bind[:event]} (#{bind[:ref]})" } }"
+      @bindings
+        .select { |bind| bind[:event] == event }
+        .map(&.[:callback].call(handled_payload, ref, _join_ref || join_ref()))
     end
 
     def reply_event_name(ref : String)
