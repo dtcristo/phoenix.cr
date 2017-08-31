@@ -29,7 +29,6 @@ module Phoenix
       @join_push = Push.new(self, CHANNEL_EVENTS[:join], @params, @timeout)
       @join_push.try do |join_push|
         join_push.receive "ok" do
-          raise "joinpush recieve"
           @state = State::Joined
           @rejoin_timer.reset()
           @push_buffer.each(&.send())
@@ -127,7 +126,7 @@ module Phoenix
       @socket.connected? && @state.joined?
     end
 
-    def push(event : String, payload : JSON::Any, timeout : UInt32 = @timeout)
+    def push(event : String, payload : JSON::Any = JSON::Any.new(({} of String => JSON::Type).as(JSON::Type)), timeout : UInt32 = @timeout)
       unless @joined_once
         raise "tried to push '#{event}' to '#{@topic}' before joining. Use channel.join() before pushing events"
       end
@@ -193,6 +192,10 @@ module Phoenix
 
     def reply_event_name(ref : String)
       return "chan_reply_#{ref}"
+    end
+
+    def joined?
+      @state.joined?
     end
   end
 end

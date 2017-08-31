@@ -198,12 +198,11 @@ module Phoenix
         @conn.try(&.close("hearbeat timeout"))
         return
       end
-      pending_heartbeat_ref = make_ref()
-      @pending_heartbeat_ref = pending_heartbeat_ref
+      @pending_heartbeat_ref = pending_heartbeat_ref = make_ref()
       push(Message.new(
         "phoenix",
         "heartbeat",
-        JSON::Any.new(nil),
+        JSON::Any.new(({} of String => JSON::Type).as(JSON::Type)),
         pending_heartbeat_ref,
         nil
       ))

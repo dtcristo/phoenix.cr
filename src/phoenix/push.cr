@@ -54,7 +54,7 @@ module Phoenix
 
     def match_receive(payload)
       @rec_hooks
-        .select { |h| h[:status] == payload["status"]? }
+        .select { |h| h[:status] == payload["status"]?.to_s }
         .each(&.[:callback].call(payload["response"]))
     end
 
