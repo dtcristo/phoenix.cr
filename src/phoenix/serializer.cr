@@ -12,8 +12,8 @@ module Phoenix
       end
     end
 
-    def self.decode(raw_payload : String) : Message
-      json = JSON.parse(raw_payload)
+    def self.decode(raw_msg : String) : Message
+      json = JSON.parse(raw_msg)
       Message.new(
         json[2].as_s,
         json[3].as_s,
