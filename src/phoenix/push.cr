@@ -22,17 +22,13 @@ module Phoenix
       return if has_received?("timeout")
       start_timeout()
       @sent = true
-      @ref.try do |ref|
-        @channel.socket.push(Message.new(
-          @channel.topic,
-          @event,
-          @payload,
-          ref,
-          @channel.join_ref()
-        ))
-        return
-      end
-      raise "ref is nil, handle this"
+      @channel.socket.push(Message.new(
+        @channel.topic,
+        @event,
+        @payload,
+        @ref,
+        @channel.join_ref()
+      ))
     end
 
     def receive(status, &callback : JSON::Any ->)
