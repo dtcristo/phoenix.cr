@@ -288,9 +288,9 @@ module Phoenix
       if msg.ref == @pending_heartbeat_ref
         @pending_heartbeat_ref = nil
       end
-      status = msg.payload["status"]?
+      status = JSON::Any.new(msg.payload)["status"]?
       ref = msg.ref
-      log("receive", "#{status && "#{status} "}#{msg.topic} #{msg.event}#{ref && " (#{ref})"}", data: msg.payload.raw)
+      log("receive", "#{status && "#{status} "}#{msg.topic} #{msg.event}#{ref && " (#{ref})"}", data: msg.payload)
       @channels
         .select(&.member?(msg.topic, msg.event, msg.payload, msg.join_ref))
         .each(&.trigger(msg.event, msg.payload, msg.ref, msg.join_ref))
@@ -305,7 +305,7 @@ module Phoenix
       @channels.each do |channel|
         channel.trigger(
           Channel::EVENTS[:error],
-          JSON::Any.new(({} of String => JSON::Type).as(JSON::Type)),
+          {} of String => JSON::Type,
           nil,
           nil
         )
@@ -317,7 +317,7 @@ module Phoenix
         encoded = @encode.call(msg)
         @conn.try(&.send(encoded))
       end
-      log("push", "#{msg.topic} #{msg.event} (#{msg.join_ref || "nil"}, #{msg.ref})", msg.payload.raw)
+      log("push", "#{msg.topic} #{msg.event} (#{msg.join_ref || "nil"}, #{msg.ref})", msg.payload)
       if connected?
         callback.call()
       else
@@ -343,7 +343,7 @@ module Phoenix
       push(Message.new(
         "phoenix",
         "heartbeat",
-        JSON::Any.new(({} of String => JSON::Type).as(JSON::Type)),
+        {} of String => JSON::Type,
         @pending_heartbeat_ref,
         nil
       ))

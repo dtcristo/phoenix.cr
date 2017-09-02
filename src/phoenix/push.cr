@@ -9,9 +9,9 @@ module Phoenix
     @received_resp : JSON::Any?
 
     # :nodoc:
-    protected def initialize(@channel : Channel, @event : String, payload : JSON::Any, @timeout : UInt32)
+    protected def initialize(@channel : Channel, @event : String, payload : JSON::Type, @timeout : UInt32)
       @payload = payload
-      @receive_hooks = [] of NamedTuple(status: String, callback: JSON::Any ->)
+      @receive_hooks = [] of NamedTuple(status: String, callback: JSON::Type ->)
       @sent = false
     end
 
@@ -47,9 +47,9 @@ module Phoenix
     #     puts "Unable to join: #{response}"
     #   end
     # ```
-    def receive(status : String, &block : JSON::Any ->) : Push
+    def receive(status : String, &block : JSON::Type ->) : Push
       if has_received?(status)
-        @received_resp.try { |resp| yield(resp["response"]) }
+        @received_resp.try { |resp| yield(resp["response"].raw.as(JSON::Type)) }
       end
       @receive_hooks << { status: status, callback: block }
       self
@@ -66,7 +66,7 @@ module Phoenix
     private def match_receive(payload : JSON::Any)
       @receive_hooks
         .select { |h| h[:status] == payload["status"]?.to_s }
-        .each(&.[:callback].call(payload["response"]))
+        .each(&.[:callback].call(payload["response"].raw.as(JSON::Type)))
     end
 
     private def cancel_ref_event
@@ -88,12 +88,12 @@ module Phoenix
       @channel.on ref_event do |payload|
         cancel_ref_event()
         cancel_timeout()
-        @received_resp = payload
-        match_receive(payload)
+        @received_resp = received_resp = JSON::Any.new(payload)
+        match_receive(received_resp)
       end
 
       @timeout_timer = timeout_timer = Timer.new(
-        -> { trigger("timeout", nil) },
+        -> { trigger("timeout", {} of String => JSON::Type) },
         @timeout
       )
       timeout_timer.schedule_timeout()
@@ -109,10 +109,10 @@ module Phoenix
     protected def trigger(status, response)
       @channel.trigger(
         @ref_event,
-        JSON::Any.new({
-            "status" => status.as(JSON::Type),
-            "response" => response.as(JSON::Type)
-          }.as(JSON::Type)),
+        {
+          "status" => status.as(JSON::Type),
+          "response" => response.as(JSON::Type)
+        },
         @ref,
         nil
       )

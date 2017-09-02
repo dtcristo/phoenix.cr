@@ -30,9 +30,9 @@ module Phoenix
     ]
 
     # :nodoc:
-    protected def initialize(@topic : String, @params : JSON::Any, @socket : Socket)
+    protected def initialize(@topic : String, @params : JSON::Type, @socket : Socket)
       @state = State::Closed
-      @bindings = [] of NamedTuple(event: String, ref: UInt32, callback: (JSON::Any, String?, String?) ->)
+      @bindings = [] of NamedTuple(event: String, ref: UInt32, callback: (JSON::Type, String?, String?) ->)
       @binding_ref = 0_u32
       @timeout = @socket.timeout
       @joined_once = false
@@ -59,7 +59,7 @@ module Phoenix
         leave_push = Push.new(
           self,
           EVENTS[:leave],
-          JSON::Any.new(({} of String => JSON::Type).as(JSON::Type)),
+          {} of String => JSON::Type,
           @timeout
         )
         leave_push.send()
@@ -77,7 +77,7 @@ module Phoenix
 
       on_error do |reason|
         next if @state.leaving? || @state.closed?
-        @socket.log("channel", "error #{@topic}", reason.raw)
+        @socket.log("channel", "error #{@topic}", reason)
         @state = State::Errored
         @rejoin_timer.schedule_timeout()
       end
@@ -121,11 +121,11 @@ module Phoenix
 
     # Hook into channel close
     def on_close(&block : ->) : UInt32
-      on(EVENTS[:close], &->(payload : JSON::Any, ref : String?, join_ref : String?) { block.call() })
+      on(EVENTS[:close], &->(payload : JSON::Type, ref : String?, join_ref : String?) { block.call() })
     end
 
     # Hook into channel errors
-    def on_error(&block : JSON::Any, String?, String? ->) : UInt32
+    def on_error(&block : JSON::Type, String?, String? ->) : UInt32
       on(EVENTS[:error], &block)
     end
 
@@ -145,7 +145,7 @@ module Phoenix
     # ```
     # Due to unsubscription, "do stuff" won't run,
     # while "do other stuff" will still run on the "event".
-    def on(event : String, &block : (JSON::Any, String?, String?) ->) : UInt32
+    def on(event : String, &block : (JSON::Type, String?, String?) ->) : UInt32
       ref = @binding_ref += 1
       @bindings << { event: event, ref: ref, callback: block }
       ref
@@ -167,7 +167,7 @@ module Phoenix
     # ```
     # channel.push("new_msg", JSON::Any.new({ "text" => input.as(JSON::Type) }.as(JSON::Type)))
     # ```
-    def push(event : String, payload : JSON::Any = JSON::Any.new(({} of String => JSON::Type).as(JSON::Type)), timeout : UInt32 = @timeout) : Push
+    def push(event : String, payload : JSON::Type = {} of String => JSON::Type, timeout : UInt32 = @timeout) : Push
       unless @joined_once
         raise "tried to push '#{event}' to '#{@topic}' before joining. Use channel.join() before pushing events"
       end
@@ -193,14 +193,14 @@ module Phoenix
     # ```
     def leave(timeout = @timeout) : Push
       @state = State::Leaving
-      on_close = Proc(JSON::Any, Nil).new do |payload|
+      on_close = Proc(JSON::Type, Nil).new do |payload|
         @socket.log("channel", "leave #{@topic}")
         trigger(EVENTS[:close], payload, nil, nil)
       end
       leave_push = Push.new(
         self,
         EVENTS[:leave],
-        JSON::Any.new(({} of String => JSON::Type).as(JSON::Type)),
+        {} of String => JSON::Type,
         timeout
       )
       leave_push
@@ -211,11 +211,11 @@ module Phoenix
       leave_push
     end
 
-    def on_message(event, payload, ref) : JSON::Any
+    def on_message(event, payload, ref) : JSON::Type
       payload
     end
 
-    protected def member?(topic : String, event : String, payload : JSON::Any, _join_ref : String?) : Bool
+    protected def member?(topic : String, event : String, payload : JSON::Type, _join_ref : String?) : Bool
       return false unless @topic == topic
       _join_ref.try do |__join_ref|
         if LIFECYCLE_EVENTS.includes?(event) && __join_ref != join_ref()
@@ -247,11 +247,11 @@ module Phoenix
       send_join(timeout)
     end
 
-    protected def trigger(event : String?, payload : JSON::Any, ref : String?, _join_ref : String?)
+    protected def trigger(event : String?, payload : JSON::Type, ref : String?, _join_ref : String?)
       handled_payload = on_message(event, payload, ref)
       @bindings
         .select { |bind| bind[:event] == event }
-        .map(&.[:callback].call(handled_payload, ref, _join_ref || join_ref()))
+        .map(&.[:callback].call(handled_payload.as(JSON::Type), ref, _join_ref || join_ref()))
     end
 
     protected def reply_event_name(ref)
