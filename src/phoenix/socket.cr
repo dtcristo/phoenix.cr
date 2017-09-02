@@ -57,9 +57,9 @@ module Phoenix
       return unless @conn.nil?
       @conn = HTTP::WebSocket.new(@end_point)
       @conn.try do |conn|
-        conn.on_close { |event| on_conn_close(event) }
-        conn.on_message { |event| on_conn_message(event) }
-        conn.on_binary { |data| on_conn_binary(data) }
+        conn.on_close { |raw_payload| on_conn_close(raw_payload) }
+        conn.on_message { |raw_payload| on_conn_message(raw_payload) }
+        conn.on_binary { |raw_payload| on_conn_binary(raw_payload) }
         spawn do
           begin
             conn.run()
@@ -141,22 +141,22 @@ module Phoenix
       @state_change_callbacks[:open].each(&.call())
     end
 
-    private def on_conn_close(event)
-      log("transport", "close", data: event.as(JSON::Type))
+    private def on_conn_close(raw_payload)
+      log("transport", "close", data: raw_payload.as(JSON::Type))
       trigger_chan_error()
       @heartbeat_timer.reset()
       @reconnect_timer.schedule_timeout()
-      @state_change_callbacks[:close].each(&.call(event))
+      @state_change_callbacks[:close].each(&.call(raw_payload))
     end
 
-    private def on_conn_error(error)
-      log("transport", "error", data: error.as(JSON::Type))
+    private def on_conn_error(raw_payload)
+      log("transport", "error", data: raw_payload.as(JSON::Type))
       trigger_chan_error()
-      @state_change_callbacks[:error].each(&.call(error))
+      @state_change_callbacks[:error].each(&.call(raw_payload))
     end
 
-    private def on_conn_message(event)
-      msg = @decode.call(event)
+    private def on_conn_message(raw_payload)
+      msg = @decode.call(raw_payload)
       if msg.ref == @pending_heartbeat_ref
         @pending_heartbeat_ref = nil
       end
@@ -166,7 +166,7 @@ module Phoenix
       @channels
         .select(&.member?(msg.topic, msg.event, msg.payload, msg.join_ref))
         .each(&.trigger(msg.event, msg.payload, msg.ref, msg.join_ref))
-      @state_change_callbacks[:message].each(&.call(event))
+      @state_change_callbacks[:message].each(&.call(raw_payload))
     end
 
     private def on_conn_binary(data)
