@@ -304,7 +304,7 @@ module Phoenix
     private def trigger_chan_error
       @channels.each do |channel|
         channel.trigger(
-          CHANNEL_EVENTS[:error],
+          Channel::EVENTS[:error],
           JSON::Any.new(({} of String => JSON::Type).as(JSON::Type)),
           nil,
           nil
