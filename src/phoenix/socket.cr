@@ -103,7 +103,13 @@ module Phoenix
 
     def connect
       return unless @conn.nil?
-      @conn = HTTP::WebSocket.new(@host, "#{@path}/websocket?vsn=#{VSN}", port: @port, tls: @tls, headers: @headers)
+      @conn = HTTP::WebSocket.new(
+        @host,
+        "#{@path}/websocket?vsn=#{VSN}",
+        port: @port,
+        tls: @tls,
+        headers: @headers
+      )
       @conn.try do |conn|
         conn.on_close { |raw_msg| on_conn_close(raw_msg) }
         conn.on_message { |raw_msg| on_conn_message(raw_msg) }
@@ -131,23 +137,47 @@ module Phoenix
     end
 
     # Registers callbacks for connection open events
-    def on_open(callback : ->)
-      @state_change_callbacks[:open] << callback
+    #
+    # ```
+    # socket.on_open do
+    #   puts "open callback"
+    # end
+    # ```
+    def on_open(&block : ->)
+      @state_change_callbacks[:open] << block
     end
 
     # Registers callbacks for connection close events
-    def on_close(callback : String ->)
-      @state_change_callbacks[:close] << callback
+    #
+    # ```
+    # socket.on_close do |raw_msg|
+    #   puts "close callback: #{raw_msg}"
+    # end
+    # ```
+    def on_close(&block : String ->)
+      @state_change_callbacks[:close] << block
     end
 
     # Registers callbacks for connection error events
-    def on_error(callback : String ->)
-      @state_change_callbacks[:error] << callback
+    #
+    # ```
+    # socket.on_error do |raw_msg|
+    #   puts "error callback: #{raw_msg}"
+    # end
+    # ```
+    def on_error(&block : String ->)
+      @state_change_callbacks[:error] << block
     end
 
     # Registers callbacks for connection message events
-    def on_message(callback : String ->)
-      @state_change_callbacks[:message] << callback
+    #
+    # ```
+    # socket.on_message do |raw_msg|
+    #   puts "message callback: #{raw_msg}"
+    # end
+    # ```
+    def on_message(&block : String ->)
+      @state_change_callbacks[:message] << block
     end
 
     private def connection_state
@@ -157,10 +187,12 @@ module Phoenix
       "closed"
     end
 
+    # Whether the socket is connected or not
     def connected? : Bool
       connection_state() == "open"
     end
 
+    # Removes a previously initiated channel
     def remove(channel : Channel)
       @channels = @channels.select { |c| c.join_ref() != channel.join_ref() }
     end
@@ -218,7 +250,14 @@ module Phoenix
     end
 
     private def trigger_chan_error
-      @channels.each(&.trigger(CHANNEL_EVENTS[:error], JSON::Any.new(({} of String => JSON::Type).as(JSON::Type)), nil, nil))
+      @channels.each do |channel|
+        channel.trigger(
+          CHANNEL_EVENTS[:error],
+          JSON::Any.new(({} of String => JSON::Type).as(JSON::Type)),
+          nil,
+          nil
+        )
+      end
     end
 
     protected def push(msg : Message)
