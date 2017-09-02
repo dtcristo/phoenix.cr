@@ -1,4 +1,6 @@
 module Phoenix
+  # A `Push` is returned from `Channel#join`, `Channel#leave` and `Channel#push`
+  # calls. Callbacks can be bound to server replies using `#receive`.
   class Push
     protected getter :ref, :timeout
 
@@ -6,18 +8,19 @@ module Phoenix
     @ref_event : String?
     @received_resp : JSON::Any?
 
-    def initialize(@channel : Channel, @event : String, payload : JSON::Any, @timeout : UInt32)
+    # :nodoc:
+    protected def initialize(@channel : Channel, @event : String, payload : JSON::Any, @timeout : UInt32)
       @payload = payload || JSON::Any.new(nil)
       @receive_hooks = [] of NamedTuple(status: String, callback: JSON::Any ->)
       @sent = false
     end
 
-    def resend(@timeout)
+    protected def resend(@timeout)
       reset()
       send()
     end
 
-    def send
+    protected def send
       return if has_received?("timeout")
       start_timeout()
       @sent = true
@@ -30,15 +33,29 @@ module Phoenix
       ))
     end
 
-    def receive(status : String, &callback : JSON::Any ->) : Push
+    # Register a callback for a push reply of a given status
+    #
+    # This example shows registering both "ok" and "error" callbacks for a
+    # channel join push. This also works for general channel pushes (if
+    # configured on the server to reply).
+    # ```
+    # channel.join()
+    #   .receive "ok" do |response|
+    #     puts "Joined successfully: #{response}"
+    #   end
+    #   .receive "error" do |response|
+    #     puts "Unable to join: #{response}"
+    #   end
+    # ```
+    def receive(status : String, &block : JSON::Any ->) : Push
       if has_received?(status)
         @received_resp.try { |resp| yield(resp["response"]) }
       end
-      @receive_hooks << { status: status, callback: callback }
+      @receive_hooks << { status: status, callback: block }
       self
     end
 
-    def reset
+    protected def reset
       cancel_ref_event()
       @ref = nil
       @ref_event = nil
@@ -46,23 +63,23 @@ module Phoenix
       @sent = false
     end
 
-    def match_receive(payload : JSON::Any)
+    private def match_receive(payload : JSON::Any)
       @receive_hooks
         .select { |h| h[:status] == payload["status"]?.to_s }
         .each(&.[:callback].call(payload["response"]))
     end
 
-    def cancel_ref_event
+    private def cancel_ref_event
       return if @ref_event.nil?
       @channel.off(@ref_event)
     end
 
-    def cancel_timeout
+    private def cancel_timeout
       @timeout_timer.try(&.reset())
       @timeout_timer = nil
      end
 
-    def start_timeout()
+    protected def start_timeout()
       cancel_timeout()
       @ref = ref = @channel.socket.make_ref()
       @ref_event = ref_event = @channel.reply_event_name(ref)
@@ -81,7 +98,7 @@ module Phoenix
       timeout_timer.schedule_timeout()
     end
 
-    def has_received?(status)
+    private def has_received?(status)
       @received_resp.try do |received_resp|
         return received_resp["status"]? == status
       end
