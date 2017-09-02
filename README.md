@@ -1,8 +1,6 @@
-# phoenix
+# phoenix.cr
 
-TODO: Write a description here
-
-Based off: https://github.com/phoenixframework/phoenix/blob/5ec246543e0950e10eab52aba333b644767c885e/assets/js/phoenix.js
+Crystal client for [Phoenix](http://phoenixframework.org/) [Channels](https://hexdocs.pm/phoenix/channels.html), based off the official JavaScript [reference implementation](https://github.com/phoenixframework/phoenix/blob/5ec246543e0950e10eab52aba333b644767c885e/assets/js/phoenix.js).
 
 ## Installation
 
@@ -22,9 +20,11 @@ require "phoenix"
 
 TODO: Write usage instructions here
 
-## Development
+## TODO
 
-TODO: Write development instructions here
+* Add tests
+* Implement Presence
+* Build larger example application
 
 ## Contributing
 
@@ -37,3 +37,7 @@ TODO: Write development instructions here
 ## Contributors
 
 - [dtcristo](https://github.com/dtcristo) David Cristofaro - creator, maintainer
+
+## Credits
+
+* Thanks [chrismccord](https://github.com/chrismccord) and the [Phoenix](https://github.com/phoenixframework/phoenix) team.
