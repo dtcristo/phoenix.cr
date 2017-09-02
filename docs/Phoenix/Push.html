@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta id="repository-name" content="github.com/dtcristo/phoenix.cr">
+  <link href="../css/style.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="../js/doc.js"></script>
+  <title>Phoenix::Push - github.com/dtcristo/phoenix.cr</title>
+</head>
+<body>
+
+<div id="types-list">
+  <div id="search-box">
+    <input type="search" id="search-input" placeholder="Search...">
+  </div>
+
+  <ul>
+    <li><a href="../index.html">README</a></li>
+  </ul>
+
+  <ul>
+  
+  <li class="parent open current" data-id="github.com/dtcristo/phoenix.cr/Phoenix" data-name="phoenix">
+      <a href="../Phoenix.html">Phoenix</a>
+      
+        <ul>
+  
+  <li class=" " data-id="github.com/dtcristo/phoenix.cr/Phoenix/Channel" data-name="phoenix::channel">
+      <a href="../Phoenix/Channel.html">Channel</a>
+      
+    </li>
+  
+  <li class=" current" data-id="github.com/dtcristo/phoenix.cr/Phoenix/Push" data-name="phoenix::push">
+      <a href="../Phoenix/Push.html">Push</a>
+      
+    </li>
+  
+  <li class=" " data-id="github.com/dtcristo/phoenix.cr/Phoenix/Socket" data-name="phoenix::socket">
+      <a href="../Phoenix/Socket.html">Socket</a>
+      
+    </li>
+  
+  <li class=" " data-id="github.com/dtcristo/phoenix.cr/Phoenix/Timer" data-name="phoenix::timer">
+      <a href="../Phoenix/Timer.html">Timer</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+</ul>
+
+</div>
+
+<div id="main-content">
+<h1 class="type-name">
+
+  <span class="kind">class</span> Phoenix::Push
+
+</h1>
+
+
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Phoenix/Push.html">Phoenix::Push</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
+
+
+
+
+  <h2>Overview</h2>
+
+  <p>A <code><a href="../Phoenix/Push.html">Push</a></code> is returned from <code><a href="../Phoenix/Channel.html#join%28timeout%3AUInt32%3D%40timeout%29%3APush-instance-method">Channel#join</a></code>, <code><a href="../Phoenix/Channel.html#leave%28timeout%3D%40timeout%29%3APush-instance-method">Channel#leave</a></code> and <code><a href="../Phoenix/Channel.html#push%28event%3AString%2Cpayload%3AJSON%3A%3AAny%3DJSON%3A%3AAny.new%28%28%7B%7DofString%3D%3EJSON%3A%3AType%29.as%28JSON%3A%3AType%29%29%2Ctimeout%3AUInt32%3D%40timeout%29%3APush-instance-method">Channel#push</a></code>
+calls. Callbacks can be bound to server replies using <code><a href="../Phoenix/Push.html#receive%28status%3AString%2C%26block%3AJSON%3A%3AAny-%3E%29%3APush-instance-method">#receive</a></code>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2>Defined in:</h2>
+  
+    
+      <a href="https://github.com/dtcristo/phoenix.cr/blob/5e2134a8f19ab9051a67c12072d504ba65f4fd58/src/phoenix/push.cr#L4" target="_blank">phoenix/push.cr</a>
+    
+    <br/>
+  
+
+
+
+
+
+
+
+
+
+  <h2>Instance Method Summary</h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#receive%28status%3AString%2C%26block%3AJSON%3A%3AAny-%3E%29%3APush-instance-method" class="signature"><strong>#receive</strong>(status : String, &block : JSON::Any -> ) : Push</a>
+        
+          <div class="summary"><p>Register a callback for a push reply of a given status</p></div>
+        
+      </li>
+    
+  </ul>
+
+
+
+
+
+<div class="methods-inherited">
+  
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+  
+</div>
+
+
+
+
+
+
+  <h2>Instance Method Detail</h2>
+  
+    <div class="entry-detail" id="receive&#40;status:String,&amp;block:JSON::Any-&gt;&#41;:Push-instance-method">
+      <div class="signature">
+        
+        def <strong>receive</strong>(status : String, &block : JSON::Any -> ) : <a href="../Phoenix/Push.html">Push</a>
+
+        <a class="method-permalink" href="#receive%28status%3AString%2C%26block%3AJSON%3A%3AAny-%3E%29%3APush-instance-method">#</a>
+      </div>
+      
+        <div class="doc"><p>Register a callback for a push reply of a given status</p>
+
+<p>This example shows registering both "ok" and "error" callbacks for a
+channel join push. This also works for general channel pushes (if
+configured on the server to reply).</p>
+
+<pre><code>channel.join()
+  .receive <span class="s">&quot;ok&quot;</span> <span class="k">do</span> <span class="o">|</span>response<span class="o">|</span>
+    puts <span class="s">&quot;Joined successfully: </span><span class="i">#{</span></span>response<span class="s"><span class="i">}</span>&quot;</span>
+  <span class="k">end</span>
+  .receive <span class="s">&quot;error&quot;</span> <span class="k">do</span> <span class="o">|</span>response<span class="o">|</span>
+    puts <span class="s">&quot;Unable to join: </span><span class="i">#{</span></span>response<span class="s"><span class="i">}</span>&quot;</span>
+  <span class="k">end</span></code></pre></div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/5e2134a8f19ab9051a67c12072d504ba65f4fd58/src/phoenix/push.cr#L50" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+
+
+</div>
+
+</body>
+</html>
