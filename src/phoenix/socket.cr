@@ -41,8 +41,13 @@ module Phoenix
 
     def disconnect(callback : (->)? = nil, reason : String? = nil)
       @conn.try do |conn|
+        # Clear `on_close` callback to prevent reconnection
         conn.on_close {}
-        conn.close(reason)
+        begin
+          conn.close(reason)
+        rescue
+          # Exception raised if socket already closed. Ignore and continue.
+        end
         @conn = nil
       end
       callback.try(&.call())
@@ -59,14 +64,18 @@ module Phoenix
           begin
             conn.run()
           rescue e
-            on_conn_error(e.message || "")
+            reason = e.message || ""
+            on_conn_error(reason)
+            on_conn_close(reason)
           end
         end
       end
       Fiber.yield
       on_conn_open()
     rescue e
-      puts "Exception in connect: #{e.message}"
+      reason = e.message || ""
+      on_conn_error(reason)
+      on_conn_close(reason)
     end
 
     def log(kind : String, msg : String, data : JSON::Type = nil.as(JSON::Type))
@@ -93,14 +102,11 @@ module Phoenix
       @state_change_callbacks[:message] << callback
     end
 
-    protected def connection_state
+    def connection_state
       @conn.try do |conn|
-        if conn.closed?
-          return "closed"
-        else
-          return "open"
-        end
+        return conn.closed? ? "closed" : "open"
       end
+      "closed"
     end
 
     def connected?
