@@ -174,7 +174,7 @@ module Phoenix
     end
 
     private def trigger_chan_error
-      raise "trigger_chan_error"
+      @channels.each(&.trigger(CHANNEL_EVENTS[:error], JSON::Any.new(({} of String => JSON::Type).as(JSON::Type)), nil, nil))
     end
 
     def push(msg : Message)
