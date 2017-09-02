@@ -1,15 +1,14 @@
 module Phoenix
   class Push
-    getter :ref, :timeout
+    protected getter :ref, :timeout
+
     @ref : String?
     @ref_event : String?
     @received_resp : JSON::Any?
 
     def initialize(@channel : Channel, @event : String, payload : JSON::Any, @timeout : UInt32)
       @payload = payload || JSON::Any.new(nil)
-      # @received_resp : String? = nil
-      # @timeout_timer : String? = nil
-      @rec_hooks = [] of NamedTuple(status: String, callback: JSON::Any ->)
+      @receive_hooks = [] of NamedTuple(status: String, callback: JSON::Any ->)
       @sent = false
     end
 
@@ -31,12 +30,11 @@ module Phoenix
       ))
     end
 
-    def receive(status, &callback : JSON::Any ->)
+    def receive(status : String, &callback : JSON::Any ->) : Push
       if has_received?(status)
         @received_resp.try { |resp| yield(resp["response"]) }
-        # yield(@received_resp[:response])
       end
-      @rec_hooks << { status: status, callback: callback }
+      @receive_hooks << { status: status, callback: callback }
       self
     end
 
@@ -48,8 +46,8 @@ module Phoenix
       @sent = false
     end
 
-    def match_receive(payload)
-      @rec_hooks
+    def match_receive(payload : JSON::Any)
+      @receive_hooks
         .select { |h| h[:status] == payload["status"]?.to_s }
         .each(&.[:callback].call(payload["response"]))
     end
@@ -90,8 +88,16 @@ module Phoenix
       false
     end
 
-    def trigger(status, response)
-      @channel.trigger(@ref_event, JSON::Any.new({ "status" => status.as(JSON::Type), "response" => response.as(JSON::Type) }.as(JSON::Type)), @ref, nil)
+    private def trigger(status, response)
+      @channel.trigger(
+        @ref_event,
+        JSON::Any.new({
+            "status" => status.as(JSON::Type),
+            "response" => response.as(JSON::Type)
+          }.as(JSON::Type)),
+        @ref,
+        nil
+      )
     end
   end
 end
