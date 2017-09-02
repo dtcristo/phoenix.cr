@@ -144,7 +144,7 @@ module Phoenix
       raise "channel leave"
     end
 
-    def on_message(event, payload, ref)
+    def on_message(event, payload, ref) : JSON::Any
       payload
     end
 
@@ -181,10 +181,8 @@ module Phoenix
     end
 
     # def trigger(event, payload, ref, join_ref)
-    def trigger(event : String, payload : JSON::Any, ref : String?, _join_ref : String?)
+    def trigger(event : String?, payload : JSON::Any, ref : String?, _join_ref : String?)
       handled_payload = on_message(event, payload, ref)
-      # puts "triggerd on #{event}"
-      # puts "bindings: #{@bindings.map { |bind| "#{bind[:event]} (#{bind[:ref]})" } }"
       @bindings
         .select { |bind| bind[:event] == event }
         .map(&.[:callback].call(handled_payload, ref, _join_ref || join_ref()))
