@@ -2,6 +2,21 @@ require "http/web_socket"
 require "uri"
 
 module Phoenix
+  # A single connection is established to the server and channels are
+  # multiplexed over the connection. Connect to the server using the Socket
+  # class:
+  #
+  # ```
+  # socket = Phoenix::Socket.new(
+  #   "http://example.com/socket",
+  #   params: {"userToken" => "123"}
+  # )
+  # socket.connect()
+  # ```
+  #
+  # The Socket constructor takes the endpoint of the socket, the
+  # authentication params, as well as options that can be found below, such as
+  # configuring the logger, and heartbeat.
   class Socket
     protected getter :host, :path, :port, :tls, :state_change_callbacks,
       :channels, :send_buffer, :ref, :timeout, :heartbeat_interval_ms,
@@ -10,6 +25,21 @@ module Phoenix
     @ref : UInt32
     @pending_heartbeat_ref : String?
 
+    # Create a socket with a provided endpoint URI or string
+    #
+    # ```
+    # socket = Phoenix::Socket.new("http://example.com/socket")
+    # ```
+    #
+    # Optionally provide keyword arguments for the following:
+    #  * headers: connection headers
+    #  * timeout: timeout in milliseconds to trigger push timeouts
+    #  * encode: proc to encode outgoing messages
+    #  * decode: proc to decode incoming messages
+    #  * heartbeat_interval_ms: millisecond interval to send a heartbeat message
+    #  * reconnect_after_ms: proc that returns the millisecond reconnect interval
+    #  * logger: proc for specialized logging
+    #  * params: params to pass when connecting
     def initialize(
         endpoint : URI | String,
         headers : HTTP::Headers = HTTP::Headers.new,
@@ -38,6 +68,15 @@ module Phoenix
       )
     end
 
+    # Create a socket with a provided host, path, port and tls state
+    #
+    # ```
+    # socket = Phoenix::Socket.new(
+    #   host: "example.com", path: '/socket', port: 80, tls: false
+    # )
+    # ```
+    #
+    # Optional keyword arguments may be provided as above.
     def initialize(
         @host : String = "localhost",
         @path : String = "/socket",
@@ -105,6 +144,7 @@ module Phoenix
       callback.try(&.call())
     end
 
+    # Initiates the WebSocket and spawns a connection fiber
     def connect
       return unless @conn.nil?
       @conn = HTTP::WebSocket.new(
