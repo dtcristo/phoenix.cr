@@ -22,6 +22,17 @@ module Phoenix
     @ref : UInt32
     @pending_heartbeat_ref : String?
 
+    # Wire protocol version
+    VSN = "2.0.0"
+    # Default timeout in milliseconds to trigger push timeouts
+    DEFAULT_TIMEOUT = 10_000_u32
+    # Default heartbeat interval in milliseconds
+    DEFAULT_HEARTBEAT_INTERVAL_MS = 30_000_u32
+    # Default reconnection timeout implements stepped backoff
+    DEFAULT_RECONNECT_AFTER_MS = Proc(UInt32, UInt32).new do |tries|
+      [1000_u32, 2000_u32, 5000_u32, 10_000_u32].at(tries - 1) { 10_000_u32 }
+    end
+
     # Create a socket with a provided endpoint URI or string
     #
     # ```
@@ -43,7 +54,7 @@ module Phoenix
         timeout : UInt32 = DEFAULT_TIMEOUT,
         encode : Message -> String = ->(msg : Message) { Serializer.encode(msg) },
         decode : String -> Message = ->(raw_msg : String) { Serializer.decode(raw_msg) },
-        heartbeat_interval_ms : UInt32 = 30_000_u32,
+        heartbeat_interval_ms : UInt32 = DEFAULT_HEARTBEAT_INTERVAL_MS,
         reconnect_after_ms : UInt32 -> UInt32 = DEFAULT_RECONNECT_AFTER_MS,
         logger : (String, String, JSON::Type ->)? = nil,
         params = {} of String => String
@@ -83,7 +94,7 @@ module Phoenix
         @timeout : UInt32 = DEFAULT_TIMEOUT,
         @encode : Message -> String = ->(msg : Message) { Serializer.encode(msg) },
         @decode : String -> Message = ->(raw_msg : String) { Serializer.decode(raw_msg) },
-        @heartbeat_interval_ms : UInt32 = 30_000_u32,
+        @heartbeat_interval_ms : UInt32 = DEFAULT_HEARTBEAT_INTERVAL_MS,
         @reconnect_after_ms : UInt32 -> UInt32 = DEFAULT_RECONNECT_AFTER_MS,
         @logger : (String, String, JSON::Type ->)? = nil,
         @params = {} of String => String
