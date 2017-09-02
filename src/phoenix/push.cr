@@ -10,7 +10,7 @@ module Phoenix
 
     # :nodoc:
     protected def initialize(@channel : Channel, @event : String, payload : JSON::Any, @timeout : UInt32)
-      @payload = payload || JSON::Any.new(nil)
+      @payload = payload
       @receive_hooks = [] of NamedTuple(status: String, callback: JSON::Any ->)
       @sent = false
     end
@@ -70,8 +70,9 @@ module Phoenix
     end
 
     private def cancel_ref_event
-      return if @ref_event.nil?
-      @channel.off(@ref_event)
+      @ref_event.try do |ref_event|
+        @channel.off(ref_event)
+      end
     end
 
     private def cancel_timeout
@@ -105,7 +106,7 @@ module Phoenix
       false
     end
 
-    private def trigger(status, response)
+    protected def trigger(status, response)
       @channel.trigger(
         @ref_event,
         JSON::Any.new({
