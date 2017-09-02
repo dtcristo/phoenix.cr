@@ -12,8 +12,8 @@ module Phoenix
     def initialize(
         @end_point : URI | String,
         @timeout : UInt32 = DEFAULT_TIMEOUT,
-        @encode : Message -> String = ->(data : Message) { Serializer.encode(data) },
-        @decode : String -> Message = ->(raw_payload : String) { Serializer.decode(raw_payload) },
+        @encode : Message -> String = ->(msg : Message) { Serializer.encode(msg) },
+        @decode : String -> Message = ->(raw_msg : String) { Serializer.decode(raw_msg) },
         @heartbeat_interval_ms : UInt32 = 30_000_u32,
         @reconnect_after_ms : UInt32 -> UInt32 = DEFAULT_RECONNECT_AFTER_MS,
         @logger : (String, String, JSON::Type ->)? = nil,
@@ -57,9 +57,9 @@ module Phoenix
       return unless @conn.nil?
       @conn = HTTP::WebSocket.new(@end_point)
       @conn.try do |conn|
-        conn.on_close { |raw_payload| on_conn_close(raw_payload) }
-        conn.on_message { |raw_payload| on_conn_message(raw_payload) }
-        conn.on_binary { |raw_payload| on_conn_binary(raw_payload) }
+        conn.on_close { |raw_msg| on_conn_close(raw_msg) }
+        conn.on_message { |raw_msg| on_conn_message(raw_msg) }
+        conn.on_binary { |raw_msg| on_conn_binary(raw_msg) }
         spawn do
           begin
             conn.run()
@@ -83,7 +83,7 @@ module Phoenix
     end
 
     # Registers callbacks for connection open events
-    def on_open(callback : Proc)
+    def on_open(callback : ->)
       @state_change_callbacks[:open] << callback
     end
 
@@ -141,22 +141,22 @@ module Phoenix
       @state_change_callbacks[:open].each(&.call())
     end
 
-    private def on_conn_close(raw_payload)
-      log("transport", "close", data: raw_payload.as(JSON::Type))
+    private def on_conn_close(raw_msg)
+      log("transport", "close", data: raw_msg.as(JSON::Type))
       trigger_chan_error()
       @heartbeat_timer.reset()
       @reconnect_timer.schedule_timeout()
-      @state_change_callbacks[:close].each(&.call(raw_payload))
+      @state_change_callbacks[:close].each(&.call(raw_msg))
     end
 
-    private def on_conn_error(raw_payload)
-      log("transport", "error", data: raw_payload.as(JSON::Type))
+    private def on_conn_error(raw_msg)
+      log("transport", "error", data: raw_msg.as(JSON::Type))
       trigger_chan_error()
-      @state_change_callbacks[:error].each(&.call(raw_payload))
+      @state_change_callbacks[:error].each(&.call(raw_msg))
     end
 
-    private def on_conn_message(raw_payload)
-      msg = @decode.call(raw_payload)
+    private def on_conn_message(raw_msg)
+      msg = @decode.call(raw_msg)
       if msg.ref == @pending_heartbeat_ref
         @pending_heartbeat_ref = nil
       end
@@ -166,7 +166,7 @@ module Phoenix
       @channels
         .select(&.member?(msg.topic, msg.event, msg.payload, msg.join_ref))
         .each(&.trigger(msg.event, msg.payload, msg.ref, msg.join_ref))
-      @state_change_callbacks[:message].each(&.call(raw_payload))
+      @state_change_callbacks[:message].each(&.call(raw_msg))
     end
 
     private def on_conn_binary(data)
