@@ -181,7 +181,7 @@ module Phoenix
     end
 
     # def trigger(event, payload, ref, join_ref)
-    def trigger(event, payload, ref, _join_ref)
+    def trigger(event : String, payload : JSON::Any, ref : String?, _join_ref : String?)
       handled_payload = on_message(event, payload, ref)
       # puts "triggerd on #{event}"
       # puts "bindings: #{@bindings.map { |bind| "#{bind[:event]} (#{bind[:ref]})" } }"
