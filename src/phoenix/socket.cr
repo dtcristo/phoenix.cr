@@ -19,7 +19,7 @@ module Phoenix
         heartbeat_interval_ms : UInt32 = 30_000_u32,
         reconnect_after_ms : UInt32 -> UInt32 = DEFAULT_RECONNECT_AFTER_MS,
         logger : (String, String, JSON::Type ->)? = nil,
-        params = {} of Symbol => String
+        params = {} of String => String
       )
       host, path, port, tls = parse_uri(endpoint)
       initialize(
@@ -50,7 +50,7 @@ module Phoenix
         @heartbeat_interval_ms : UInt32 = 30_000_u32,
         @reconnect_after_ms : UInt32 -> UInt32 = DEFAULT_RECONNECT_AFTER_MS,
         @logger : (String, String, JSON::Type ->)? = nil,
-        @params = {} of Symbol => String
+        @params = {} of String => String
       )
       @state_change_callbacks = {
         open: [] of ->,
@@ -81,10 +81,14 @@ module Phoenix
       raise ArgumentError.new("No host or path specified which are required.")
     end
 
-    private def endpoint_display
+    private def endpoint_display()
       protocol = @tls ? "wss" : "ws"
       port = @port.nil? ? "" : ":#{@port}"
-      "#{protocol}://#{@host}#{port}#{@path}/websocket?vsn=#{VSN}"
+      "#{protocol}://#{@host}#{port}#{@path}/websocket?#{conn_query()}"
+    end
+
+    private def conn_query
+      HTTP::Params.encode(@params.merge({"vsn" => VSN}))
     end
 
     def disconnect(callback : (->)? = nil, reason : String? = nil)
@@ -105,7 +109,7 @@ module Phoenix
       return unless @conn.nil?
       @conn = HTTP::WebSocket.new(
         @host,
-        "#{@path}/websocket?vsn=#{VSN}",
+        "#{@path}/websocket?#{conn_query()}",
         port: @port,
         tls: @tls,
         headers: @headers
@@ -210,7 +214,7 @@ module Phoenix
     end
 
     private def on_conn_open
-      log("transport", "connected to #{endpoint_display}")
+      log("transport", "connected to #{endpoint_display()}")
       flush_send_buffer()
       @reconnect_timer.reset()
       @heartbeat_timer.schedule_timeout()
