@@ -4,17 +4,20 @@ module Phoenix
   describe Socket do
     describe "#initialize" do
       it "sets defaults" do
-        socket = Socket.new("ws://localhost:4000/socket/websocket")
-        socket.channels.size.should eq(0)
-        socket.send_buffer.size.should eq(0)
-        socket.ref.should eq(0)
-        socket.end_point.should eq("ws://localhost:4000/socket/websocket")
+        socket = Socket.new()
+        socket.host.should eq("localhost")
+        socket.path.should eq("/socket")
+        socket.port.should eq(4000)
+        socket.tls.should eq(false)
         socket.state_change_callbacks.should eq({
           open: [] of ->,
           close: [] of String ->,
           error: [] of String ->,
           message: [] of String ->
         })
+        socket.channels.size.should eq(0)
+        socket.send_buffer.size.should eq(0)
+        socket.ref.should eq(0)
         socket.timeout.should eq(10_000)
         socket.heartbeat_interval_ms.should eq(30_000)
         socket.logger.should eq(nil)

@@ -3,14 +3,47 @@ require "uri"
 
 module Phoenix
   class Socket
-    getter :end_point, :channels, :timeout, :heartbeat_interval_ms, :reconnect_after_ms, :logger
-    protected getter :send_buffer, :ref, :state_change_callbacks
+    protected getter :host, :path, :port, :tls, :state_change_callbacks,
+      :channels, :send_buffer, :ref, :timeout, :heartbeat_interval_ms,
+      :reconnect_after_ms, :logger
 
     @ref : UInt32
     @pending_heartbeat_ref : String?
 
     def initialize(
-        @end_point : URI | String,
+        endpoint : URI | String,
+        headers : HTTP::Headers = HTTP::Headers.new,
+        timeout : UInt32 = DEFAULT_TIMEOUT,
+        encode : Message -> String = ->(msg : Message) { Serializer.encode(msg) },
+        decode : String -> Message = ->(raw_msg : String) { Serializer.decode(raw_msg) },
+        heartbeat_interval_ms : UInt32 = 30_000_u32,
+        reconnect_after_ms : UInt32 -> UInt32 = DEFAULT_RECONNECT_AFTER_MS,
+        logger : (String, String, JSON::Type ->)? = nil,
+        params = {} of Symbol => String
+      )
+      host, path, port, tls = parse_uri(endpoint)
+      initialize(
+        host: host,
+        path: path,
+        port: port,
+        tls: tls,
+        headers: headers,
+        timeout: timeout,
+        encode: encode,
+        decode: decode,
+        heartbeat_interval_ms: heartbeat_interval_ms,
+        reconnect_after_ms: reconnect_after_ms,
+        logger: logger,
+        params: params
+      )
+    end
+
+    def initialize(
+        @host : String = "localhost",
+        @path : String = "/socket",
+        @port : Int32? = 4000,
+        @tls : Bool = false,
+        @headers : HTTP::Headers = HTTP::Headers.new,
         @timeout : UInt32 = DEFAULT_TIMEOUT,
         @encode : Message -> String = ->(msg : Message) { Serializer.encode(msg) },
         @decode : String -> Message = ->(raw_msg : String) { Serializer.decode(raw_msg) },
@@ -39,6 +72,21 @@ module Phoenix
       )
     end
 
+    private def parse_uri(uri : URI | String)
+      uri = URI.parse(uri) if uri.is_a?(String)
+      if (host = uri.host) && (path = uri.path)
+        tls = uri.scheme == "https" || uri.scheme == "wss"
+        return {host, path, uri.port, tls}
+      end
+      raise ArgumentError.new("No host or path specified which are required.")
+    end
+
+    private def endpoint_display
+      protocol = @tls ? "wss" : "ws"
+      port = @port.nil? ? "" : ":#{@port}"
+      "#{protocol}://#{@host}#{port}#{@path}/websocket?vsn=#{VSN}"
+    end
+
     def disconnect(callback : (->)? = nil, reason : String? = nil)
       @conn.try do |conn|
         # Clear `on_close` callback to prevent reconnection
@@ -55,7 +103,7 @@ module Phoenix
 
     def connect
       return unless @conn.nil?
-      @conn = HTTP::WebSocket.new(@end_point)
+      @conn = HTTP::WebSocket.new(@host, "#{@path}/websocket?vsn=#{VSN}", port: @port, tls: @tls, headers: @headers)
       @conn.try do |conn|
         conn.on_close { |raw_msg| on_conn_close(raw_msg) }
         conn.on_message { |raw_msg| on_conn_message(raw_msg) }
@@ -78,7 +126,7 @@ module Phoenix
       on_conn_close(reason)
     end
 
-    def log(kind : String, msg : String, data : JSON::Type = nil.as(JSON::Type))
+    protected def log(kind : String, msg : String, data : JSON::Type = nil.as(JSON::Type))
       @logger.try(&.call(kind, msg, data.as(JSON::Type)))
     end
 
@@ -102,14 +150,14 @@ module Phoenix
       @state_change_callbacks[:message] << callback
     end
 
-    def connection_state
+    private def connection_state
       @conn.try do |conn|
         return conn.closed? ? "closed" : "open"
       end
       "closed"
     end
 
-    def connected?
+    def connected? : Bool
       connection_state() == "open"
     end
 
@@ -122,26 +170,22 @@ module Phoenix
     # ```
     # channel = socket.channel("topic:subtopic")
     # ```
-    def channel(topic : String, params = JSON::Any.new(({} of String => JSON::Type).as(JSON::Type)))
+    def channel(topic : String, params = JSON::Any.new(({} of String => JSON::Type).as(JSON::Type))) : Channel
       chan = Channel.new(topic, params, self)
       chan.setup()
       channels << chan
       chan
     end
 
-    # =====================================
-    #            PRIVATE METHODS
-    # =====================================
-
     private def on_conn_open
-      log("transport", "connected to #{@end_point}")
+      log("transport", "connected to #{endpoint_display}")
       flush_send_buffer()
       @reconnect_timer.reset()
       @heartbeat_timer.schedule_timeout()
       @state_change_callbacks[:open].each(&.call())
     end
 
-    private def on_conn_close(raw_msg)
+    private def on_conn_close(raw_msg : String)
       log("transport", "close", data: raw_msg.as(JSON::Type))
       trigger_chan_error()
       @heartbeat_timer.reset()
@@ -149,13 +193,13 @@ module Phoenix
       @state_change_callbacks[:close].each(&.call(raw_msg))
     end
 
-    private def on_conn_error(raw_msg)
+    private def on_conn_error(raw_msg : String)
       log("transport", "error", data: raw_msg.as(JSON::Type))
       trigger_chan_error()
       @state_change_callbacks[:error].each(&.call(raw_msg))
     end
 
-    private def on_conn_message(raw_msg)
+    private def on_conn_message(raw_msg : String)
       msg = @decode.call(raw_msg)
       if msg.ref == @pending_heartbeat_ref
         @pending_heartbeat_ref = nil
@@ -177,7 +221,7 @@ module Phoenix
       @channels.each(&.trigger(CHANNEL_EVENTS[:error], JSON::Any.new(({} of String => JSON::Type).as(JSON::Type)), nil, nil))
     end
 
-    def push(msg : Message)
+    protected def push(msg : Message)
       callback = Proc(Nil).new do
         encoded = @encode.call(msg)
         @conn.try(&.send(encoded))
@@ -196,7 +240,7 @@ module Phoenix
       return @ref.to_s
     end
 
-    def send_heartbeat
+    private def send_heartbeat
       return unless connected?
       if @pending_heartbeat_ref
         @pending_heartbeat_ref = nil
@@ -204,12 +248,12 @@ module Phoenix
         @conn.try(&.close("hearbeat timeout"))
         return
       end
-      @pending_heartbeat_ref = pending_heartbeat_ref = make_ref()
+      @pending_heartbeat_ref = make_ref()
       push(Message.new(
         "phoenix",
         "heartbeat",
         JSON::Any.new(({} of String => JSON::Type).as(JSON::Type)),
-        pending_heartbeat_ref,
+        @pending_heartbeat_ref,
         nil
       ))
     end
