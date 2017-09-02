@@ -9,7 +9,7 @@ module Phoenix
       Leaving
     end
 
-    getter :topic, :socket
+    protected getter :topic, :socket
 
     @timeout : UInt32
 
