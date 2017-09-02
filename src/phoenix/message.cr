@@ -1,6 +1,5 @@
-require "json"
-
 module Phoenix
+  # :nodoc:
   struct Message
     getter :topic, :event, :payload, :ref, :join_ref
 

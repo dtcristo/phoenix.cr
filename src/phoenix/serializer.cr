@@ -1,4 +1,5 @@
 module Phoenix
+  # :nodoc:
   module Serializer
     def self.encode(msg : Message) : String
       JSON.build do |json|

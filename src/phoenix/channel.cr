@@ -1,5 +1,6 @@
 module Phoenix
   class Channel
+    # :nodoc:
     enum State
       Closed
       Errored
