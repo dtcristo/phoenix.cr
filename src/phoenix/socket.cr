@@ -254,7 +254,7 @@ module Phoenix
     # ```
     # channel = socket.channel("topic:subtopic")
     # ```
-    def channel(topic : String, params = JSON::Any.new(({} of String => JSON::Type).as(JSON::Type))) : Channel
+    def channel(topic : String, params = {} of String => JSON::Type) : Channel
       chan = Channel.new(topic, params, self)
       chan.setup()
       channels << chan
