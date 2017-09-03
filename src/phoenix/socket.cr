@@ -40,14 +40,14 @@ module Phoenix
     # ```
     #
     # Optionally provide keyword arguments for the following:
-    #  * headers: connection headers
-    #  * timeout: timeout in milliseconds to trigger push timeouts
-    #  * encode: proc to encode outgoing messages
-    #  * decode: proc to decode incoming messages
-    #  * heartbeat_interval_ms: millisecond interval to send a heartbeat message
-    #  * reconnect_after_ms: proc that returns the millisecond reconnect interval
-    #  * logger: proc for specialized logging
-    #  * params: params to pass when connecting
+    #  * `headers`: connection headers
+    #  * `timeout`: timeout in milliseconds to trigger push timeouts
+    #  * `encode`: proc to encode outgoing messages
+    #  * `decode`: proc to decode incoming messages
+    #  * `heartbeat_interval_ms`: millisecond interval to send a heartbeat message
+    #  * `reconnect_after_ms`: proc that returns the millisecond reconnect interval
+    #  * `logger`: proc for specialized logging
+    #  * `params`: params to pass when connecting
     def initialize(
         endpoint : URI | String,
         headers : HTTP::Headers = HTTP::Headers.new,
@@ -80,7 +80,7 @@ module Phoenix
     #
     # ```
     # socket = Phoenix::Socket.new(
-    #   host: "example.com", path: '/socket', port: 80, tls: false
+    #   host: "example.com", path: "/socket", port: 80, tls: false
     # )
     # ```
     #
