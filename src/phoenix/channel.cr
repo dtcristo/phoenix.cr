@@ -165,7 +165,7 @@ module Phoenix
     # Send a message down the channel
     #
     # ```
-    # channel.push("new_msg", JSON::Any.new({ "text" => input.as(JSON::Type) }.as(JSON::Type)))
+    # channel.push("new_msg", { "text" => "Hello world!".as(JSON::Type) })
     # ```
     def push(event : String, payload : JSON::Type = {} of String => JSON::Type, timeout : UInt32 = @timeout) : Push
       unless @joined_once
