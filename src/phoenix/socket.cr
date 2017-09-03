@@ -16,8 +16,8 @@ module Phoenix
   # configuring the logger, and heartbeat.
   class Socket
     protected getter :host, :path, :port, :tls, :state_change_callbacks,
-      :channels, :send_buffer, :ref, :timeout, :heartbeat_interval_ms,
-      :reconnect_after_ms, :logger
+      :channels, :send_buffer, :ref, :headers, :timeout, :encode, :decode,
+      :heartbeat_interval_ms, :reconnect_after_ms, :logger, :params
 
     @ref : UInt32
     @pending_heartbeat_ref : String?
