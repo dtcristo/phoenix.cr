@@ -155,25 +155,23 @@ module Phoenix
     # Initiates the WebSocket and spawns a connection fiber
     def connect
       return unless @conn.nil?
-      @conn = HTTP::WebSocket.new(
+      @conn = conn = HTTP::WebSocket.new(
         @host,
         "#{@path}/websocket?#{conn_query()}",
         port: @port,
         tls: @tls,
         headers: @headers
       )
-      @conn.try do |conn|
-        conn.on_close { |raw_msg| on_conn_close(raw_msg) }
-        conn.on_message { |raw_msg| on_conn_message(raw_msg) }
-        conn.on_binary { |raw_msg| on_conn_binary(raw_msg) }
-        spawn do
-          begin
-            conn.run()
-          rescue e
-            reason = e.message || ""
-            on_conn_error(reason)
-            on_conn_close(reason)
-          end
+      conn.on_close { |raw_msg| on_conn_close(raw_msg) }
+      conn.on_message { |raw_msg| on_conn_message(raw_msg) }
+      conn.on_binary { |raw_msg| on_conn_binary(raw_msg) }
+      spawn do
+        begin
+          conn.run()
+        rescue e
+          reason = e.message || ""
+          on_conn_error(reason)
+          on_conn_close(reason)
         end
       end
       Fiber.yield
