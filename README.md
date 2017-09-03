@@ -2,6 +2,8 @@
 
 Crystal client for [Phoenix](http://phoenixframework.org/) [Channels](https://hexdocs.pm/phoenix/channels.html), based off the official JavaScript [reference implementation](https://github.com/phoenixframework/phoenix/blob/5ec246543e0950e10eab52aba333b644767c885e/assets/js/phoenix.js).
 
+API documentation available [here](https://dtcristo.github.io/phoenix.cr/).
+
 ## Installation
 
 Add this to your application's `shard.yml`:
@@ -14,11 +16,49 @@ dependencies:
 
 ## Usage
 
+The example below shows basic usage; connecting to a socket, joining a channel, binding to an event and sending messages.
+
 ```crystal
 require "phoenix"
+
+# Create socket and connect to it
+socket = Phoenix::Socket.new("http://example.com/socket")
+socket.connect()
+
+# Initiate a channel, bind to an event and join
+channel = socket.channel("topic:subtopic")
+channel.on "event" do |payload|
+  # do stuff with payload
+end
+channel.join()
+
+# Start a loop and send a message down the channel every second
+loop do
+  sleep 1
+  channel.push("new_msg", { "text" => "Hello world!".as(JSON::Type) })
+end
 ```
 
-TODO: Write usage instructions here
+The Phoenix Channels [docs](https://hexdocs.pm/phoenix/channels.html) provide details on implementing sockets and channels on the server side. The phoenix.cr [docs](https://dtcristo.github.io/phoenix.cr/) detail the client side API available for use in your Crystal application.
+
+## Chat example
+
+[examples/chat.cr](https://github.com/dtcristo/phoenix.cr/blob/master/examples/chat.cr) demonstates an example chat client.
+
+Start the [phoenix-chat](https://github.com/dtcristo/phoenix-chat) server example:
+```bash
+$ git clone https://github.com/dtcristo/phoenix-chat
+$ cd phoenix-chat
+$ mix deps.get
+$ mix phx.server
+```
+
+Run the chat client:
+```bash
+$ crystal examples/chat.cr
+```
+
+Follow the prompts to enter your name and chat away.
 
 ## TODO
 
@@ -26,18 +66,10 @@ TODO: Write usage instructions here
 * Implement Presence
 * Build larger example application
 
-## Contributing
-
-1. Fork it ( https://github.com/dtcristo/phoenix.cr/fork )
-2. Create your feature branch (git checkout -b my-new-feature)
-3. Commit your changes (git commit -am 'Add some feature')
-4. Push to the branch (git push origin my-new-feature)
-5. Create a new Pull Request
-
 ## Contributors
 
 - [dtcristo](https://github.com/dtcristo) David Cristofaro - creator, maintainer
 
 ## Credits
 
-* Thanks [chrismccord](https://github.com/chrismccord) and the [Phoenix](https://github.com/phoenixframework/phoenix) team.
+* Thanks [chrismccord](https://github.com/chrismccord) and the [Phoenix team](https://github.com/phoenixframework/phoenix/graphs/contributors) for building an amazing web framework.
