@@ -211,8 +211,23 @@ module Phoenix
       leave_push
     end
 
-    def on_message(event, payload, ref) : JSON::Type
+    # Default message handler
+    @on_message = Proc(String?, JSON::Type, String?, JSON::Type).new do |event, payload, ref|
       payload
+    end
+
+    # Overridable message hook
+    #
+    # Receives all events for specialized message handling before dispatching to
+    # the channel callbacks. Must return the payload, modified or unmodified.
+    #
+    # ```
+    # channel.on_message do |event, payload, ref|
+    #   # handle payload here
+    #   handled_payload
+    # end
+    # ```
+    def on_message(&@on_message : String?, JSON::Type, String? -> JSON::Type)
     end
 
     protected def member?(topic : String, event : String, payload : JSON::Type, _join_ref : String?) : Bool
@@ -248,7 +263,7 @@ module Phoenix
     end
 
     protected def trigger(event : String?, payload : JSON::Type, ref : String?, _join_ref : String?)
-      handled_payload = on_message(event, payload, ref)
+      handled_payload = @on_message.call(event, payload.as(JSON::Type), ref)
       @bindings
         .select { |bind| bind[:event] == event }
         .map(&.[:callback].call(handled_payload.as(JSON::Type), ref, _join_ref || join_ref()))
