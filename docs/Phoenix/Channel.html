@@ -83,7 +83,7 @@
   <h2>Defined in:</h2>
   
     
-      <a href="https://github.com/dtcristo/phoenix.cr/blob/a443dbe3ff9a6ed84e8bbeeb142598eab6b1480d/src/phoenix/channel.cr#L2" target="_blank">phoenix/channel.cr</a>
+      <a href="https://github.com/dtcristo/phoenix.cr/blob/f69a6be37d3d2a73f72b074758e2db0d117eea57/src/phoenix/channel.cr#L2" target="_blank">phoenix/channel.cr</a>
     
     <br/>
   
@@ -138,7 +138,7 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#on%28event%3AString%2C%26block%3AJSON%3A%3AAny%2CString%3F%2CString%3F-%3E%29%3AUInt32-instance-method" class="signature"><strong>#on</strong>(event : String, &block : JSON::Any, String?, String? -> ) : UInt32</a>
+        <a href="#on%28event%3AString%2C%26block%3AJSON%3A%3AType%2CString%3F%2CString%3F-%3E%29%3AUInt32-instance-method" class="signature"><strong>#on</strong>(event : String, &block : JSON::Type, String?, String? -> ) : UInt32</a>
         
           <div class="summary"><p>Subscribes to channel events</p></div>
         
@@ -152,33 +152,23 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#on_error%28%26block%3AJSON%3A%3AAny%2CString%3F%2CString%3F-%3E%29%3AUInt32-instance-method" class="signature"><strong>#on_error</strong>(&block : JSON::Any, String?, String? -> ) : UInt32</a>
+        <a href="#on_error%28%26block%3AJSON%3A%3AType%2CString%3F%2CString%3F-%3E%29%3AUInt32-instance-method" class="signature"><strong>#on_error</strong>(&block : JSON::Type, String?, String? -> ) : UInt32</a>
         
           <div class="summary"><p>Hook into channel errors</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#on_message%28event%2Cpayload%2Cref%29%3AJSON%3A%3AAny-instance-method" class="signature"><strong>#on_message</strong>(event, payload, ref) : JSON::Any</a>
+        <a href="#on_message%28%26on_message%3AString%3F%2CJSON%3A%3AType%2CString%3F-%3EJSON%3A%3AType%29-instance-method" class="signature"><strong>#on_message</strong>(&on_message : String?, JSON::Type, String? -> JSON::Type)</a>
         
-          <div class="summary"><p>/**  * Overridable message hook  *  * Receives all events for specialized message handling  * before dispatching to the channel callbacks.</p></div>
+          <div class="summary"><p>Overridable message hook</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#push%28event%3AString%2Cpayload%3AJSON%3A%3AAny%3DJSON%3A%3AAny.new%28%28%7B%7DofString%3D%3EJSON%3A%3AType%29.as%28JSON%3A%3AType%29%29%2Ctimeout%3AUInt32%3D%40timeout%29%3APush-instance-method" class="signature"><strong>#push</strong>(event : String, payload : JSON::Any = <span class="t">JSON</span><span class="t">::</span><span class="t">Any</span>.<span class="k">new</span>(({} <span class="k">of</span> <span class="t">String</span> => <span class="t">JSON</span><span class="t">::</span><span class="t">Type</span>).<span class="k">as</span>(<span class="t">JSON</span><span class="t">::</span><span class="t">Type</span>)), timeout : UInt32 = @timeout) : Push</a>
+        <a href="#push%28event%3AString%2Cpayload%3AJSON%3A%3AType%3D%7B%7DofString%3D%3EJSON%3A%3AType%2Ctimeout%3AUInt32%3D%40timeout%29%3APush-instance-method" class="signature"><strong>#push</strong>(event : String, payload : JSON::Type = {} <span class="k">of</span> <span class="t">String</span> => <span class="t">JSON</span><span class="t">::</span><span class="t">Type</span>, timeout : UInt32 = @timeout) : Push</a>
         
           <div class="summary"><p>Send a message down the channel</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#socket%3APhoenix%3A%3ASocket-instance-method" class="signature"><strong>#socket</strong> : Phoenix::Socket</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#topic%3AString-instance-method" class="signature"><strong>#topic</strong> : String</a>
         
       </li>
     
@@ -229,7 +219,7 @@
       
         <div class="doc"><p>Join the channel</p>
 
-<p>Returns a <code><a href="../Phoenix/Push.html">Push</a></code> instance for binding to reply events with <code><a href="../Phoenix/Push.html#receive%28status%3AString%2C%26block%3AJSON%3A%3AAny-%3E%29%3APush-instance-method">Push#receive</a></code>.</p>
+<p>Returns a <code><a href="../Phoenix/Push.html">Push</a></code> instance for binding to reply events with <code><a href="../Phoenix/Push.html#receive%28status%3AString%2C%26block%3AJSON%3A%3AType-%3E%29%3APush-instance-method">Push#receive</a></code>.</p>
 
 <pre><code>channel.join()
   .receive <span class="s">&quot;ok&quot;</span> <span class="k">do</span> <span class="o">|</span>response<span class="o">|</span>
@@ -242,7 +232,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/a443dbe3ff9a6ed84e8bbeeb142598eab6b1480d/src/phoenix/channel.cr#L110" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f69a6be37d3d2a73f72b074758e2db0d117eea57/src/phoenix/channel.cr#L110" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -267,7 +257,7 @@ server.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/a443dbe3ff9a6ed84e8bbeeb142598eab6b1480d/src/phoenix/channel.cr#L194" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f69a6be37d3d2a73f72b074758e2db0d117eea57/src/phoenix/channel.cr#L194" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -285,17 +275,17 @@ server.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/a443dbe3ff9a6ed84e8bbeeb142598eab6b1480d/src/phoenix/channel.cr#L155" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f69a6be37d3d2a73f72b074758e2db0d117eea57/src/phoenix/channel.cr#L155" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="on&#40;event:String,&amp;block:JSON::Any,String?,String?-&gt;&#41;:UInt32-instance-method">
+    <div class="entry-detail" id="on&#40;event:String,&amp;block:JSON::Type,String?,String?-&gt;&#41;:UInt32-instance-method">
       <div class="signature">
         
-        def <strong>on</strong>(event : String, &block : JSON::Any, String?, String? -> ) : UInt32
+        def <strong>on</strong>(event : String, &block : JSON::Type, String?, String? -> ) : UInt32
 
-        <a class="method-permalink" href="#on%28event%3AString%2C%26block%3AJSON%3A%3AAny%2CString%3F%2CString%3F-%3E%29%3AUInt32-instance-method">#</a>
+        <a class="method-permalink" href="#on%28event%3AString%2C%26block%3AJSON%3A%3AType%2CString%3F%2CString%3F-%3E%29%3AUInt32-instance-method">#</a>
       </div>
       
         <div class="doc"><p>Subscribes to channel events</p>
@@ -317,7 +307,7 @@ while "do other stuff" will still run on the "event".</p></div>
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/a443dbe3ff9a6ed84e8bbeeb142598eab6b1480d/src/phoenix/channel.cr#L148" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f69a6be37d3d2a73f72b074758e2db0d117eea57/src/phoenix/channel.cr#L148" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -335,17 +325,17 @@ while "do other stuff" will still run on the "event".</p></div>
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/a443dbe3ff9a6ed84e8bbeeb142598eab6b1480d/src/phoenix/channel.cr#L123" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f69a6be37d3d2a73f72b074758e2db0d117eea57/src/phoenix/channel.cr#L123" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="on_error&#40;&amp;block:JSON::Any,String?,String?-&gt;&#41;:UInt32-instance-method">
+    <div class="entry-detail" id="on_error&#40;&amp;block:JSON::Type,String?,String?-&gt;&#41;:UInt32-instance-method">
       <div class="signature">
         
-        def <strong>on_error</strong>(&block : JSON::Any, String?, String? -> ) : UInt32
+        def <strong>on_error</strong>(&block : JSON::Type, String?, String? -> ) : UInt32
 
-        <a class="method-permalink" href="#on_error%28%26block%3AJSON%3A%3AAny%2CString%3F%2CString%3F-%3E%29%3AUInt32-instance-method">#</a>
+        <a class="method-permalink" href="#on_error%28%26block%3AJSON%3A%3AType%2CString%3F%2CString%3F-%3E%29%3AUInt32-instance-method">#</a>
       </div>
       
         <div class="doc"><p>Hook into channel errors</p></div>
@@ -353,40 +343,43 @@ while "do other stuff" will still run on the "event".</p></div>
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/a443dbe3ff9a6ed84e8bbeeb142598eab6b1480d/src/phoenix/channel.cr#L128" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f69a6be37d3d2a73f72b074758e2db0d117eea57/src/phoenix/channel.cr#L128" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="on_message&#40;event,payload,ref&#41;:JSON::Any-instance-method">
+    <div class="entry-detail" id="on_message&#40;&amp;on_message:String?,JSON::Type,String?-&gt;JSON::Type&#41;-instance-method">
       <div class="signature">
         
-        def <strong>on_message</strong>(event, payload, ref) : JSON::Any
+        def <strong>on_message</strong>(&on_message : String?, JSON::Type, String? -> JSON::Type)
 
-        <a class="method-permalink" href="#on_message%28event%2Cpayload%2Cref%29%3AJSON%3A%3AAny-instance-method">#</a>
+        <a class="method-permalink" href="#on_message%28%26on_message%3AString%3F%2CJSON%3A%3AType%2CString%3F-%3EJSON%3A%3AType%29-instance-method">#</a>
       </div>
       
-        <div class="doc"><p>/**</p>
+        <div class="doc"><p>Overridable message hook</p>
 
-<ul><li>Overridable message hook
- *</li><li>Receives all events for specialized message handling</li><li>before dispatching to the channel callbacks.
- *</li><li>Must return the payload, modified or unmodified</li><li>@param {string} event</li><li>@param {Object} payload</li><li>@param {integer} ref
- */</li></ul></div>
+<p>Receives all events for specialized message handling before dispatching to
+the channel callbacks. Must return the payload, modified or unmodified.</p>
+
+<pre><code>channel.on_message <span class="k">do</span> <span class="o">|</span>event, payload, ref<span class="o">|</span>
+  <span class="c"># handle payload here</span>
+  handled_payload
+<span class="k">end</span></code></pre></div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/a443dbe3ff9a6ed84e8bbeeb142598eab6b1480d/src/phoenix/channel.cr#L226" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f69a6be37d3d2a73f72b074758e2db0d117eea57/src/phoenix/channel.cr#L230" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="push&#40;event:String,payload:JSON::Any&#61;JSON::Any.new&#40;&#40;&#123;&#125;ofString&#61;&gt;JSON::Type&#41;.as&#40;JSON::Type&#41;&#41;,timeout:UInt32&#61;&#64;timeout&#41;:Push-instance-method">
+    <div class="entry-detail" id="push&#40;event:String,payload:JSON::Type&#61;&#123;&#125;ofString&#61;&gt;JSON::Type,timeout:UInt32&#61;&#64;timeout&#41;:Push-instance-method">
       <div class="signature">
         
-        def <strong>push</strong>(event : String, payload : JSON::Any = <span class="t">JSON</span><span class="t">::</span><span class="t">Any</span>.<span class="k">new</span>(({} <span class="k">of</span> <span class="t">String</span> => <span class="t">JSON</span><span class="t">::</span><span class="t">Type</span>).<span class="k">as</span>(<span class="t">JSON</span><span class="t">::</span><span class="t">Type</span>)), timeout : UInt32 = @timeout) : <a href="../Phoenix/Push.html">Push</a>
+        def <strong>push</strong>(event : String, payload : JSON::Type = {} <span class="k">of</span> <span class="t">String</span> => <span class="t">JSON</span><span class="t">::</span><span class="t">Type</span>, timeout : UInt32 = @timeout) : <a href="../Phoenix/Push.html">Push</a>
 
-        <a class="method-permalink" href="#push%28event%3AString%2Cpayload%3AJSON%3A%3AAny%3DJSON%3A%3AAny.new%28%28%7B%7DofString%3D%3EJSON%3A%3AType%29.as%28JSON%3A%3AType%29%29%2Ctimeout%3AUInt32%3D%40timeout%29%3APush-instance-method">#</a>
+        <a class="method-permalink" href="#push%28event%3AString%2Cpayload%3AJSON%3A%3AType%3D%7B%7DofString%3D%3EJSON%3A%3AType%2Ctimeout%3AUInt32%3D%40timeout%29%3APush-instance-method">#</a>
       </div>
       
         <div class="doc"><p>Send a message down the channel</p>
@@ -396,39 +389,7 @@ while "do other stuff" will still run on the "event".</p></div>
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/a443dbe3ff9a6ed84e8bbeeb142598eab6b1480d/src/phoenix/channel.cr#L170" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="socket:Phoenix::Socket-instance-method">
-      <div class="signature">
-        
-        def <strong>socket</strong> : <a href="../Phoenix/Socket.html">Phoenix::Socket</a>
-
-        <a class="method-permalink" href="#socket%3APhoenix%3A%3ASocket-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/a443dbe3ff9a6ed84e8bbeeb142598eab6b1480d/src/phoenix/channel.cr#L12" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="topic:String-instance-method">
-      <div class="signature">
-        
-        def <strong>topic</strong> : String
-
-        <a class="method-permalink" href="#topic%3AString-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/a443dbe3ff9a6ed84e8bbeeb142598eab6b1480d/src/phoenix/channel.cr#L12" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f69a6be37d3d2a73f72b074758e2db0d117eea57/src/phoenix/channel.cr#L170" target="_blank">View source</a>]
         
       </div>
     </div>

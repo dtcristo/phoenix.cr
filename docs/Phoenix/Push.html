@@ -69,8 +69,8 @@
 
   <h2>Overview</h2>
 
-  <p>A <code><a href="../Phoenix/Push.html">Push</a></code> is returned from <code><a href="../Phoenix/Channel.html#join%28timeout%3AUInt32%3D%40timeout%29%3APush-instance-method">Channel#join</a></code>, <code><a href="../Phoenix/Channel.html#leave%28timeout%3D%40timeout%29%3APush-instance-method">Channel#leave</a></code> and <code><a href="../Phoenix/Channel.html#push%28event%3AString%2Cpayload%3AJSON%3A%3AAny%3DJSON%3A%3AAny.new%28%28%7B%7DofString%3D%3EJSON%3A%3AType%29.as%28JSON%3A%3AType%29%29%2Ctimeout%3AUInt32%3D%40timeout%29%3APush-instance-method">Channel#push</a></code>
-calls. Callbacks can be bound to server replies using <code><a href="../Phoenix/Push.html#receive%28status%3AString%2C%26block%3AJSON%3A%3AAny-%3E%29%3APush-instance-method">#receive</a></code>.</p>
+  <p>A <code><a href="../Phoenix/Push.html">Push</a></code> is returned from <code><a href="../Phoenix/Channel.html#join%28timeout%3AUInt32%3D%40timeout%29%3APush-instance-method">Channel#join</a></code>, <code><a href="../Phoenix/Channel.html#leave%28timeout%3D%40timeout%29%3APush-instance-method">Channel#leave</a></code> and <code><a href="../Phoenix/Channel.html#push%28event%3AString%2Cpayload%3AJSON%3A%3AType%3D%7B%7DofString%3D%3EJSON%3A%3AType%2Ctimeout%3AUInt32%3D%40timeout%29%3APush-instance-method">Channel#push</a></code>
+calls. Callbacks can be bound to server replies using <code><a href="../Phoenix/Push.html#receive%28status%3AString%2C%26block%3AJSON%3A%3AType-%3E%29%3APush-instance-method">#receive</a></code>.</p>
 
 
 
@@ -88,7 +88,7 @@ calls. Callbacks can be bound to server replies using <code><a href="../Phoenix/
   <h2>Defined in:</h2>
   
     
-      <a href="https://github.com/dtcristo/phoenix.cr/blob/a443dbe3ff9a6ed84e8bbeeb142598eab6b1480d/src/phoenix/push.cr#L4" target="_blank">phoenix/push.cr</a>
+      <a href="https://github.com/dtcristo/phoenix.cr/blob/f69a6be37d3d2a73f72b074758e2db0d117eea57/src/phoenix/push.cr#L4" target="_blank">phoenix/push.cr</a>
     
     <br/>
   
@@ -105,7 +105,7 @@ calls. Callbacks can be bound to server replies using <code><a href="../Phoenix/
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#receive%28status%3AString%2C%26block%3AJSON%3A%3AAny-%3E%29%3APush-instance-method" class="signature"><strong>#receive</strong>(status : String, &block : JSON::Any -> ) : Push</a>
+        <a href="#receive%28status%3AString%2C%26block%3AJSON%3A%3AType-%3E%29%3APush-instance-method" class="signature"><strong>#receive</strong>(status : String, &block : JSON::Type -> ) : Push</a>
         
           <div class="summary"><p>Register a callback for a push reply of a given status</p></div>
         
@@ -148,12 +148,12 @@ calls. Callbacks can be bound to server replies using <code><a href="../Phoenix/
 
   <h2>Instance Method Detail</h2>
   
-    <div class="entry-detail" id="receive&#40;status:String,&amp;block:JSON::Any-&gt;&#41;:Push-instance-method">
+    <div class="entry-detail" id="receive&#40;status:String,&amp;block:JSON::Type-&gt;&#41;:Push-instance-method">
       <div class="signature">
         
-        def <strong>receive</strong>(status : String, &block : JSON::Any -> ) : <a href="../Phoenix/Push.html">Push</a>
+        def <strong>receive</strong>(status : String, &block : JSON::Type -> ) : <a href="../Phoenix/Push.html">Push</a>
 
-        <a class="method-permalink" href="#receive%28status%3AString%2C%26block%3AJSON%3A%3AAny-%3E%29%3APush-instance-method">#</a>
+        <a class="method-permalink" href="#receive%28status%3AString%2C%26block%3AJSON%3A%3AType-%3E%29%3APush-instance-method">#</a>
       </div>
       
         <div class="doc"><p>Register a callback for a push reply of a given status</p>
@@ -173,7 +173,7 @@ configured on the server to reply).</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/a443dbe3ff9a6ed84e8bbeeb142598eab6b1480d/src/phoenix/push.cr#L50" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f69a6be37d3d2a73f72b074758e2db0d117eea57/src/phoenix/push.cr#L50" target="_blank">View source</a>]
         
       </div>
     </div>
