@@ -2,11 +2,11 @@ require "../src/phoenix"
 require "colorize"
 
 # A custom logger proc for debugging socket and channel events
-logger = Proc(String, String, JSON::Type, Nil).new do |kind, msg, payload|
+logger = Proc(String, String, JSON::Type, Nil).new do |kind, log_msg, payload|
   log = if payload.nil? || payload == ""
-    "#{kind}: #{msg}"
+    "#{kind}: #{log_msg}"
   else
-    "#{kind}: #{msg} - #{payload}"
+    "#{kind}: #{log_msg} - #{payload}"
   end
   puts log.colorize(:dark_gray)
 end
