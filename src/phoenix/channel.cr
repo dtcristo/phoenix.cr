@@ -219,13 +219,13 @@ module Phoenix
       return false unless @topic == topic
       _join_ref.try do |__join_ref|
         if LIFECYCLE_EVENTS.includes?(event) && __join_ref != join_ref()
-          # TODO: Log this better
+          # TODO: Log this better, unable to cast to JSON::Type
           # @socket.log("channel", "dropping outdated message", {
-          #   "topic" => topic,
-          #   "event" => event,
-          #   "payload" => payload,
-          #   "join_ref" => join_ref
-          # })
+          #   "topic" => topic.as(JSON::Type),
+          #   "event" => event.as(JSON::Type),
+          #   "payload" => payload.as(JSON::Type),
+          #   "join_ref" => __join_ref.as(JSON::Type)
+          # }.as(JSON::Type))
           @socket.log("channel", "dropping outdated message")
           return false
         end
