@@ -5,7 +5,7 @@ module Phoenix
   # ```
   # reconnect_timer = Phoenix::Timer.new(
   #   ->{ connect() },
-  #   ->(count : UInt32) { [1000_u32, 5000_u32, 10_000_u32].at(count - 1) { 10_000_u32 } }
+  #   ->(count : UInt32) { [1000_u32, 5000_u32, 10_000_u32].fetch(count - 1) { 10_000_u32 } }
   # )
   # reconnect_timer.schedule_timeout # fires after 1000
   # reconnect_timer.schedule_timeout # fires after 5000
