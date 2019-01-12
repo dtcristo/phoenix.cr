@@ -23,19 +23,19 @@ require "phoenix"
 
 # Create socket and connect to it
 socket = Phoenix::Socket.new("http://example.com/socket")
-socket.connect()
+socket.connect
 
 # Initiate a channel, bind to an event and join
 channel = socket.channel("topic:subtopic")
 channel.on "event" do |payload|
   # do stuff with payload
 end
-channel.join()
+channel.join
 
 # Start a loop and send a message down the channel every second
 loop do
   sleep 1
-  channel.push("new_msg", { "text" => "Hello world!".as(JSON::Type) })
+  channel.push("new_msg", JSON::Any.new({"text" => JSON::Any.new("Hello world!")}))
 end
 ```
 
@@ -46,25 +46,27 @@ The Phoenix Channels [docs](https://hexdocs.pm/phoenix/channels.html) provide de
 [examples/chat.cr](https://github.com/dtcristo/phoenix.cr/blob/master/examples/chat.cr) demonstates an example chat client.
 
 Start the [phoenix-chat](https://github.com/dtcristo/phoenix-chat) server example:
-```bash
-$ git clone https://github.com/dtcristo/phoenix-chat
-$ cd phoenix-chat
-$ mix deps.get
-$ mix phx.server
+
+```sh
+git clone https://github.com/dtcristo/phoenix-chat
+cd phoenix-chat
+mix deps.get
+mix phx.server
 ```
 
 Run the chat client:
-```bash
-$ crystal examples/chat.cr
+
+```sh
+crystal examples/chat.cr
 ```
 
 Follow the prompts to enter your name and chat away.
 
 ## TODO
 
-* Add tests
-* Implement Presence
-* Build larger example application
+- Add tests
+- Implement Presence
+- Build larger example application
 
 ## Contributors
 
@@ -72,4 +74,4 @@ Follow the prompts to enter your name and chat away.
 
 ## Credits
 
-* Thanks [chrismccord](https://github.com/chrismccord) and the [Phoenix team](https://github.com/phoenixframework/phoenix/graphs/contributors) for building an amazing web framework.
+- Thanks [chrismccord](https://github.com/chrismccord) and the [Phoenix team](https://github.com/phoenixframework/phoenix/graphs/contributors) for building an amazing web framework.
