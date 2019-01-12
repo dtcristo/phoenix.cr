@@ -8,7 +8,7 @@ module Phoenix
   #   "http://example.com/socket",
   #   params: {"userToken" => "123"}
   # )
-  # socket.connect()
+  # socket.connect
   # ```
   #
   # The Socket constructor takes the endpoint of the socket, the
@@ -49,16 +49,16 @@ module Phoenix
     #  * `logger`: proc for specialized logging
     #  * `params`: params to pass when connecting
     def initialize(
-        endpoint : URI | String,
-        headers : HTTP::Headers = HTTP::Headers.new,
-        timeout : UInt32 = DEFAULT_TIMEOUT,
-        encode : Message -> String = ->(msg : Message) { Serializer.encode(msg) },
-        decode : String -> Message = ->(raw_msg : String) { Serializer.decode(raw_msg) },
-        heartbeat_interval_ms : UInt32 = DEFAULT_HEARTBEAT_INTERVAL_MS,
-        reconnect_after_ms : UInt32 -> UInt32 = DEFAULT_RECONNECT_AFTER_MS,
-        logger : (String, String, JSON::Type ->)? = nil,
-        params = {} of String => String
-      )
+      endpoint : URI | String,
+      headers : HTTP::Headers = HTTP::Headers.new,
+      timeout : UInt32 = DEFAULT_TIMEOUT,
+      encode : Message -> String = ->(msg : Message) { Serializer.encode(msg) },
+      decode : String -> Message = ->(raw_msg : String) { Serializer.decode(raw_msg) },
+      heartbeat_interval_ms : UInt32 = DEFAULT_HEARTBEAT_INTERVAL_MS,
+      reconnect_after_ms : UInt32 -> UInt32 = DEFAULT_RECONNECT_AFTER_MS,
+      logger : (String, String, JSON::Type ->)? = nil,
+      params = {} of String => String
+    )
       host, path, port, tls = parse_uri(endpoint)
       initialize(
         host: host,
@@ -86,35 +86,35 @@ module Phoenix
     #
     # Optional keyword arguments may be provided as above.
     def initialize(
-        @host : String = "localhost",
-        @path : String = "/socket",
-        @port : Int32? = 4000,
-        @tls : Bool = false,
-        @headers : HTTP::Headers = HTTP::Headers.new,
-        @timeout : UInt32 = DEFAULT_TIMEOUT,
-        @encode : Message -> String = ->(msg : Message) { Serializer.encode(msg) },
-        @decode : String -> Message = ->(raw_msg : String) { Serializer.decode(raw_msg) },
-        @heartbeat_interval_ms : UInt32 = DEFAULT_HEARTBEAT_INTERVAL_MS,
-        @reconnect_after_ms : UInt32 -> UInt32 = DEFAULT_RECONNECT_AFTER_MS,
-        @logger : (String, String, JSON::Type ->)? = nil,
-        @params = {} of String => String
-      )
+      @host : String = "localhost",
+      @path : String = "/socket",
+      @port : Int32? = 4000,
+      @tls : Bool = false,
+      @headers : HTTP::Headers = HTTP::Headers.new,
+      @timeout : UInt32 = DEFAULT_TIMEOUT,
+      @encode : Message -> String = ->(msg : Message) { Serializer.encode(msg) },
+      @decode : String -> Message = ->(raw_msg : String) { Serializer.decode(raw_msg) },
+      @heartbeat_interval_ms : UInt32 = DEFAULT_HEARTBEAT_INTERVAL_MS,
+      @reconnect_after_ms : UInt32 -> UInt32 = DEFAULT_RECONNECT_AFTER_MS,
+      @logger : (String, String, JSON::Type ->)? = nil,
+      @params = {} of String => String
+    )
       @state_change_callbacks = {
-        open: [] of ->,
-        close: [] of String ->,
-        error: [] of String ->,
-        message: [] of String ->
+        open:    [] of ->,
+        close:   [] of String ->,
+        error:   [] of String ->,
+        message: [] of String ->,
       }
       @channels = [] of Channel
       @send_buffer = [] of ->
       @ref = 0_u32
       @heartbeat_timer = Timer.new(
-        -> { send_heartbeat() },
+        ->{ send_heartbeat() },
         @heartbeat_interval_ms,
         repeat: true
       )
       @reconnect_timer = Timer.new(
-        -> { disconnect(-> { connect() }) },
+        ->{ disconnect(->{ connect() }) },
         @reconnect_after_ms
       )
     end
@@ -128,7 +128,7 @@ module Phoenix
       raise ArgumentError.new("No host or path specified which are required.")
     end
 
-    private def endpoint_display()
+    private def endpoint_display
       protocol = @tls ? "wss" : "ws"
       port = @port.nil? ? "" : ":#{@port}"
       "#{protocol}://#{@host}#{port}#{@path}/websocket?#{conn_query()}"
@@ -141,7 +141,7 @@ module Phoenix
     def disconnect(callback : (->)? = nil, reason : String? = nil)
       @conn.try do |conn|
         # Clear `on_close` callback to prevent reconnection
-        conn.on_close {}
+        conn.on_close { }
         begin
           conn.close(reason)
         rescue
@@ -167,7 +167,7 @@ module Phoenix
       conn.on_binary { |raw_msg| on_conn_binary(raw_msg) }
       spawn do
         begin
-          conn.run()
+          conn.run
         rescue e
           reason = e.message || ""
           on_conn_error(reason)
@@ -244,7 +244,7 @@ module Phoenix
 
     # Removes a previously initiated channel
     def remove(channel : Channel)
-      @channels = @channels.select { |c| c.join_ref() != channel.join_ref() }
+      @channels = @channels.select { |c| c.join_ref != channel.join_ref }
     end
 
     # Initiates a new channel for the given topic
@@ -254,7 +254,7 @@ module Phoenix
     # ```
     def channel(topic : String, params = {} of String => JSON::Type) : Channel
       chan = Channel.new(topic, params, self)
-      chan.setup()
+      chan.setup
       channels << chan
       chan
     end
@@ -262,16 +262,16 @@ module Phoenix
     private def on_conn_open
       log("transport", "connected to #{endpoint_display()}")
       flush_send_buffer()
-      @reconnect_timer.reset()
-      @heartbeat_timer.schedule_timeout()
+      @reconnect_timer.reset
+      @heartbeat_timer.schedule_timeout
       @state_change_callbacks[:open].each(&.call())
     end
 
     private def on_conn_close(raw_msg : String)
       log("transport", "close", data: raw_msg.as(JSON::Type))
       trigger_chan_error()
-      @heartbeat_timer.reset()
-      @reconnect_timer.schedule_timeout()
+      @heartbeat_timer.reset
+      @reconnect_timer.schedule_timeout
       @state_change_callbacks[:close].each(&.call(raw_msg))
     end
 
@@ -317,7 +317,7 @@ module Phoenix
       end
       log("push", "#{msg.topic} #{msg.event} (#{msg.join_ref || "nil"}, #{msg.ref})", msg.payload)
       if connected?
-        callback.call()
+        callback.call
       else
         @send_buffer << callback
       end

@@ -4,13 +4,13 @@ module Phoenix
   #
   # ```
   # reconnect_timer = Phoenix::Timer.new(
-  #   -> { connect() },
+  #   ->{ connect() },
   #   ->(count : UInt32) { [1000_u32, 5000_u32, 10_000_u32].at(count - 1) { 10_000_u32 } }
   # )
-  # reconnect_timer.schedule_timeout() # fires after 1000
-  # reconnect_timer.schedule_timeout() # fires after 5000
-  # reconnect_timer.reset()
-  # reconnect_timer.schedule_timeout() # fires after 1000
+  # reconnect_timer.schedule_timeout # fires after 1000
+  # reconnect_timer.schedule_timeout # fires after 5000
+  # reconnect_timer.reset
+  # reconnect_timer.schedule_timeout # fires after 1000
   # ```
   class Timer
     @count : UInt32
@@ -42,7 +42,7 @@ module Phoenix
         sleep(@delay_calc.call(@count + 1) * 0.001)
         if @active_timeouts[id]
           @count += 1
-          @callback.call()
+          @callback.call
           schedule_timeout() if @repeat
         end
       end

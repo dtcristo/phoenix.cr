@@ -29,7 +29,7 @@ module Phoenix
         @event,
         @payload,
         @ref,
-        @channel.join_ref()
+        @channel.join_ref
       ))
     end
 
@@ -39,7 +39,7 @@ module Phoenix
     # channel join push. This also works for general channel pushes (if
     # configured on the server to reply).
     # ```
-    # channel.join()
+    # channel.join
     #   .receive "ok" do |response|
     #     puts "Joined successfully: #{response}"
     #   end
@@ -51,7 +51,7 @@ module Phoenix
       if has_received?(status)
         @received_resp.try { |resp| yield(resp["response"].raw.as(JSON::Type)) }
       end
-      @receive_hooks << { status: status, callback: block }
+      @receive_hooks << {status: status, callback: block}
       self
     end
 
@@ -78,11 +78,11 @@ module Phoenix
     private def cancel_timeout
       @timeout_timer.try(&.reset())
       @timeout_timer = nil
-     end
+    end
 
-    protected def start_timeout()
+    protected def start_timeout
       cancel_timeout()
-      @ref = ref = @channel.socket.make_ref()
+      @ref = ref = @channel.socket.make_ref
       @ref_event = ref_event = @channel.reply_event_name(ref)
 
       @channel.on ref_event do |payload|
@@ -93,10 +93,10 @@ module Phoenix
       end
 
       @timeout_timer = timeout_timer = Timer.new(
-        -> { trigger("timeout", {} of String => JSON::Type) },
+        ->{ trigger("timeout", {} of String => JSON::Type) },
         @timeout
       )
-      timeout_timer.schedule_timeout()
+      timeout_timer.schedule_timeout
     end
 
     private def has_received?(status)
@@ -110,8 +110,8 @@ module Phoenix
       @channel.trigger(
         @ref_event,
         {
-          "status" => status.as(JSON::Type),
-          "response" => response.as(JSON::Type)
+          "status"   => status.as(JSON::Type),
+          "response" => response.as(JSON::Type),
         },
         @ref,
         nil

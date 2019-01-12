@@ -4,17 +4,17 @@ module Phoenix
   describe Socket do
     describe "#initialize" do
       it "sets defaults" do
-        socket = Socket.new()
+        socket = Socket.new
 
         socket.host.should eq("localhost")
         socket.path.should eq("/socket")
         socket.port.should eq(4000)
         socket.tls.should eq(false)
         socket.state_change_callbacks.should eq({
-          open: [] of ->,
-          close: [] of String ->,
-          error: [] of String ->,
-          message: [] of String ->
+          open:    [] of ->,
+          close:   [] of String ->,
+          error:   [] of String ->,
+          message: [] of String ->,
         })
         socket.channels.size.should eq(0)
         socket.send_buffer.size.should eq(0)
@@ -42,7 +42,7 @@ module Phoenix
           heartbeat_interval_ms: custom_heatbeat,
           reconnect_after_ms: custom_reconnect,
           logger: custom_logger,
-          params: { "userToken" => "123" }
+          params: {"userToken" => "123"}
         )
 
         socket.host.should eq("example.com")

@@ -8,7 +8,7 @@ module Phoenix
 
         channel = Channel.new(
           "topic",
-          { "one" => "two".as(JSON::Type) }.as(JSON::Type),
+          {"one" => "two".as(JSON::Type)}.as(JSON::Type),
           socket
         )
 

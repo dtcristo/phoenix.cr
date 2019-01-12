@@ -17,9 +17,9 @@ module Phoenix
     EVENTS = {
       close: "phx_close",
       error: "phx_error",
-      join: "phx_join",
+      join:  "phx_join",
       reply: "phx_reply",
-      leave: "phx_leave"
+      leave: "phx_leave",
     }
 
     LIFECYCLE_EVENTS = [
@@ -27,7 +27,7 @@ module Phoenix
       EVENTS[:error],
       EVENTS[:join],
       EVENTS[:reply],
-      EVENTS[:leave]
+      EVENTS[:leave],
     ]
 
     # :nodoc:
@@ -39,7 +39,7 @@ module Phoenix
       @joined_once = false
       @push_buffer = [] of Push
       @rejoin_timer = Timer.new(
-        -> { rejoin_until_connected() },
+        ->{ rejoin_until_connected() },
         @socket.reconnect_after_ms
       )
     end
@@ -49,7 +49,7 @@ module Phoenix
 
       join_push.receive "ok" do
         @state = State::Joined
-        @rejoin_timer.reset()
+        @rejoin_timer.reset
         @push_buffer.each(&.send())
         @push_buffer = [] of Push
       end
@@ -63,14 +63,14 @@ module Phoenix
           {} of String => JSON::Type,
           @timeout
         )
-        leave_push.send()
+        leave_push.send
         @state = State::Errored
-        join_push.reset()
-        @rejoin_timer.schedule_timeout()
+        join_push.reset
+        @rejoin_timer.schedule_timeout
       end
 
       on_close do
-        @rejoin_timer.reset()
+        @rejoin_timer.reset
         @socket.log("channel", "close #{@topic} (#{join_ref()})")
         @state = State::Closed
         @socket.remove(self)
@@ -80,7 +80,7 @@ module Phoenix
         next if @state.leaving? || @state.closed?
         @socket.log("channel", "error #{@topic}", reason)
         @state = State::Errored
-        @rejoin_timer.schedule_timeout()
+        @rejoin_timer.schedule_timeout
       end
 
       on EVENTS[:reply] do |payload, ref|
@@ -89,7 +89,7 @@ module Phoenix
     end
 
     private def rejoin_until_connected
-      @rejoin_timer.schedule_timeout()
+      @rejoin_timer.schedule_timeout
       if @socket.connected?
         rejoin()
       end
@@ -100,7 +100,7 @@ module Phoenix
     # Returns a `Push` instance for binding to reply events with `Push#receive`.
     #
     # ```
-    # channel.join()
+    # channel.join
     #   .receive "ok" do |response|
     #     puts "Joined successfully: #{response}"
     #   end
@@ -122,7 +122,7 @@ module Phoenix
 
     # Hook into channel close
     def on_close(&block : ->) : UInt32
-      on(EVENTS[:close], &->(payload : JSON::Type, ref : String?, join_ref : String?) { block.call() })
+      on(EVENTS[:close], &->(payload : JSON::Type, ref : String?, join_ref : String?) { block.call })
     end
 
     # Hook into channel errors
@@ -148,7 +148,7 @@ module Phoenix
     # while "do other stuff" will still run on the "event".
     def on(event : String, &block : (JSON::Type, String?, String?) ->) : UInt32
       ref = @binding_ref += 1
-      @bindings << { event: event, ref: ref, callback: block }
+      @bindings << {event: event, ref: ref, callback: block}
       ref
     end
 
@@ -166,7 +166,7 @@ module Phoenix
     # Send a message down the channel
     #
     # ```
-    # channel.push("new_msg", { "text" => "Hello world!".as(JSON::Type) })
+    # channel.push("new_msg", {"text" => "Hello world!".as(JSON::Type)})
     # ```
     def push(event : String, payload : JSON::Type = {} of String => JSON::Type, timeout : UInt32 = @timeout) : Push
       unless @joined_once
@@ -174,9 +174,9 @@ module Phoenix
       end
       push_event = Push.new(self, event, payload, timeout)
       if can_push?
-        push_event.send()
+        push_event.send
       else
-        push_event.start_timeout()
+        push_event.start_timeout
         @push_buffer << push_event
       end
       push_event
@@ -188,7 +188,7 @@ module Phoenix
     # server.
     #
     # ```
-    # channel.leave().receive "ok" do
+    # channel.leave.receive "ok" do
     #   puts "Left successfully"
     # end
     # ```
@@ -207,7 +207,7 @@ module Phoenix
       leave_push
         .receive("ok", &on_close)
         .receive("timeout", &on_close)
-        .send()
+        .send
       leave_push.trigger("ok", {} of String => JSON::Type) unless can_push?
       leave_push
     end
