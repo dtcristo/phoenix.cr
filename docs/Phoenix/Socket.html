@@ -1,24 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Crystal Docs 0.27.0">
+
+
+<link href="../css/style.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="../js/doc.js"></script>
+<script type="text/javascript">
+  CrystalDoc.base_path = "../";
+</script>
+
   <meta id="repository-name" content="github.com/dtcristo/phoenix.cr">
-  <link href="../css/style.css" rel="stylesheet" type="text/css" />
-  <script type="text/javascript" src="../js/doc.js"></script>
   <title>Phoenix::Socket - github.com/dtcristo/phoenix.cr</title>
 </head>
 <body>
 
-<div id="types-list">
-  <div id="search-box">
-    <input type="search" id="search-input" placeholder="Search...">
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="search-box">
+      <input type="search" class="search-input" placeholder="Search..." spellcheck="false" aria-label="Search">
+    </div>
+
+    <div class="repository-links">
+      <a href="../index.html">README</a>
+    </div>
   </div>
 
-  <ul>
-    <li><a href="../index.html">README</a></li>
-  </ul>
+  <div class="search-results" class="hidden">
+    <ul class="search-list"></ul>
+  </div>
 
-  <ul>
+  <div class="types-list">
+    <ul>
   
   <li class="parent open current" data-id="github.com/dtcristo/phoenix.cr/Phoenix" data-name="phoenix">
       <a href="../Phoenix.html">Phoenix</a>
@@ -52,9 +68,11 @@
   
 </ul>
 
+  </div>
 </div>
 
-<div id="main-content">
+
+<div class="main-content">
 <h1 class="type-name">
 
   <span class="kind">class</span> Phoenix::Socket
@@ -77,7 +95,7 @@ class:</p>
   <span class="s">&quot;http://example.com/socket&quot;</span>,
   params: {<span class="s">&quot;userToken&quot;</span> => <span class="s">&quot;123&quot;</span>}
 )
-socket.connect()</code></pre>
+socket.connect</code></pre>
 
 <p>The Socket constructor takes the endpoint of the socket, the
 authentication params, as well as options that can be found below, such as
@@ -99,7 +117,9 @@ configuring the logger, and heartbeat.</p>
   <h2>Defined in:</h2>
   
     
-      <a href="https://github.com/dtcristo/phoenix.cr/blob/3eca5e1b03827609576fc7de0ac5010228093f89/src/phoenix/socket.cr#L17" target="_blank">phoenix/socket.cr</a>
+      <a href="https://github.com/dtcristo/phoenix.cr/blob/f11fc298c5fd3bbaa69c6a661ad2088e08894afc/src/phoenix/socket.cr#L17" target="_blank">
+        phoenix/socket.cr
+      </a>
     
     <br/>
   
@@ -122,7 +142,7 @@ configuring the logger, and heartbeat.</p>
     
       <dt class="entry-const" id="DEFAULT_RECONNECT_AFTER_MS">
         <strong>DEFAULT_RECONNECT_AFTER_MS</strong> = <code><span class="t">Proc</span>(<span class="t">UInt32</span>, <span class="t">UInt32</span>).<span class="k">new</span> <span class="k">do</span> <span class="o">|</span>tries<span class="o">|</span>
-  [<span class="n">1000_u32</span>, <span class="n">2000_u32</span>, <span class="n">5000_u32</span>, <span class="n">10000_u32</span>].at(tries <span class="o">-</span> <span class="n">1</span>) <span class="k">do</span>
+  [<span class="n">1000_u32</span>, <span class="n">2000_u32</span>, <span class="n">5000_u32</span>, <span class="n">10000_u32</span>].fetch(tries <span class="o">-</span> <span class="n">1</span>) <span class="k">do</span>
     <span class="n">10000_u32</span>
   <span class="k">end</span>
 <span class="k">end</span></code>
@@ -159,22 +179,22 @@ configuring the logger, and heartbeat.</p>
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#new%28endpoint%3AURI%7CString%2Cheaders%3AHTTP%3A%3AHeaders%3DHTTP%3A%3AHeaders.new%2Ctimeout%3AUInt32%3DDEFAULT_TIMEOUT%2Cencode%3AMessage-%3EString%3D-%3E%28msg%3AMessage%29do%0ASerializer.encode%28msg%29%0Aend%2Cdecode%3AString-%3EMessage%3D-%3E%28raw_msg%3AString%29do%0ASerializer.decode%28raw_msg%29%0Aend%2Cheartbeat_interval_ms%3AUInt32%3DDEFAULT_HEARTBEAT_INTERVAL_MS%2Creconnect_after_ms%3AUInt32-%3EUInt32%3DDEFAULT_RECONNECT_AFTER_MS%2Clogger%3AString%2CString%2CJSON%3A%3AType-%3E%3F%3Dnil%2Cparams%3D%7B%7DofString%3D%3EString%29-class-method" class="signature"><strong>.new</strong>(endpoint : URI | String, headers : HTTP::Headers = <span class="t">HTTP</span><span class="t">::</span><span class="t">Headers</span>.<span class="k">new</span>, timeout : UInt32 = <span class="t">DEFAULT_TIMEOUT</span>, encode : Message -> String = ->(msg : <span class="t">Message</span>) <span class="k">do</span>
+        <a href="#new%28endpoint%3AURI%7CString%2Cheaders%3AHTTP%3A%3AHeaders%3DHTTP%3A%3AHeaders.new%2Ctimeout%3AUInt32%3DDEFAULT_TIMEOUT%2Cencode%3AMessage-%3EString%3D-%3E%28msg%3AMessage%29do%0ASerializer.encode%28msg%29%0Aend%2Cdecode%3AString-%3EMessage%3D-%3E%28raw_msg%3AString%29do%0ASerializer.decode%28raw_msg%29%0Aend%2Cheartbeat_interval_ms%3AUInt32%3DDEFAULT_HEARTBEAT_INTERVAL_MS%2Creconnect_after_ms%3AUInt32-%3EUInt32%3DDEFAULT_RECONNECT_AFTER_MS%2Clogger%3AString%2CString%2CJSON%3A%3AAny-%3E%3F%3Dnil%2Cparams%3D%7B%7DofString%3D%3EString%29-class-method" class="signature"><strong>.new</strong>(endpoint : URI | String, headers : HTTP::Headers = <span class="t">HTTP</span><span class="t">::</span><span class="t">Headers</span>.<span class="k">new</span>, timeout : UInt32 = <span class="t">DEFAULT_TIMEOUT</span>, encode : Message -> String = ->(msg : <span class="t">Message</span>) <span class="k">do</span>
   <span class="t">Serializer</span>.encode(msg)
 <span class="k">end</span>, decode : String -> Message = ->(raw_msg : <span class="t">String</span>) <span class="k">do</span>
   <span class="t">Serializer</span>.decode(raw_msg)
-<span class="k">end</span>, heartbeat_interval_ms : UInt32 = <span class="t">DEFAULT_HEARTBEAT_INTERVAL_MS</span>, reconnect_after_ms : UInt32 -> UInt32 = <span class="t">DEFAULT_RECONNECT_AFTER_MS</span>, logger : String, String, JSON::Type -> ? = <span class="n">nil</span>, params = {} <span class="k">of</span> <span class="t">String</span> => <span class="t">String</span>)</a>
+<span class="k">end</span>, heartbeat_interval_ms : UInt32 = <span class="t">DEFAULT_HEARTBEAT_INTERVAL_MS</span>, reconnect_after_ms : UInt32 -> UInt32 = <span class="t">DEFAULT_RECONNECT_AFTER_MS</span>, logger : String, String, JSON::Any -> ? = <span class="n">nil</span>, params = {} <span class="k">of</span> <span class="t">String</span> => <span class="t">String</span>)</a>
         
           <div class="summary"><p>Create a socket with a provided endpoint URI or string</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#new%28host%3AString%3D%26quot%3Blocalhost%26quot%3B%2Cpath%3AString%3D%26quot%3B%2Fsocket%26quot%3B%2Cport%3AInt32%3F%3D4000%2Ctls%3ABool%3Dfalse%2Cheaders%3AHTTP%3A%3AHeaders%3DHTTP%3A%3AHeaders.new%2Ctimeout%3AUInt32%3DDEFAULT_TIMEOUT%2Cencode%3AMessage-%3EString%3D-%3E%28msg%3AMessage%29do%0ASerializer.encode%28msg%29%0Aend%2Cdecode%3AString-%3EMessage%3D-%3E%28raw_msg%3AString%29do%0ASerializer.decode%28raw_msg%29%0Aend%2Cheartbeat_interval_ms%3AUInt32%3DDEFAULT_HEARTBEAT_INTERVAL_MS%2Creconnect_after_ms%3AUInt32-%3EUInt32%3DDEFAULT_RECONNECT_AFTER_MS%2Clogger%3AString%2CString%2CJSON%3A%3AType-%3E%3F%3Dnil%2Cparams%3D%7B%7DofString%3D%3EString%29-class-method" class="signature"><strong>.new</strong>(host : String = <span class="s">&quot;localhost&quot;</span>, path : String = <span class="s">&quot;/socket&quot;</span>, port : Int32? = <span class="n">4000</span>, tls : Bool = <span class="n">false</span>, headers : HTTP::Headers = <span class="t">HTTP</span><span class="t">::</span><span class="t">Headers</span>.<span class="k">new</span>, timeout : UInt32 = <span class="t">DEFAULT_TIMEOUT</span>, encode : Message -> String = ->(msg : <span class="t">Message</span>) <span class="k">do</span>
+        <a href="#new%28host%3AString%3D%26quot%3Blocalhost%26quot%3B%2Cpath%3AString%3D%26quot%3B%2Fsocket%26quot%3B%2Cport%3AInt32%3F%3D4000%2Ctls%3ABool%3Dfalse%2Cheaders%3AHTTP%3A%3AHeaders%3DHTTP%3A%3AHeaders.new%2Ctimeout%3AUInt32%3DDEFAULT_TIMEOUT%2Cencode%3AMessage-%3EString%3D-%3E%28msg%3AMessage%29do%0ASerializer.encode%28msg%29%0Aend%2Cdecode%3AString-%3EMessage%3D-%3E%28raw_msg%3AString%29do%0ASerializer.decode%28raw_msg%29%0Aend%2Cheartbeat_interval_ms%3AUInt32%3DDEFAULT_HEARTBEAT_INTERVAL_MS%2Creconnect_after_ms%3AUInt32-%3EUInt32%3DDEFAULT_RECONNECT_AFTER_MS%2Clogger%3AString%2CString%2CJSON%3A%3AAny-%3E%3F%3Dnil%2Cparams%3D%7B%7DofString%3D%3EString%29-class-method" class="signature"><strong>.new</strong>(host : String = <span class="s">&quot;localhost&quot;</span>, path : String = <span class="s">&quot;/socket&quot;</span>, port : Int32? = <span class="n">4000</span>, tls : Bool = <span class="n">false</span>, headers : HTTP::Headers = <span class="t">HTTP</span><span class="t">::</span><span class="t">Headers</span>.<span class="k">new</span>, timeout : UInt32 = <span class="t">DEFAULT_TIMEOUT</span>, encode : Message -> String = ->(msg : <span class="t">Message</span>) <span class="k">do</span>
   <span class="t">Serializer</span>.encode(msg)
 <span class="k">end</span>, decode : String -> Message = ->(raw_msg : <span class="t">String</span>) <span class="k">do</span>
   <span class="t">Serializer</span>.decode(raw_msg)
-<span class="k">end</span>, heartbeat_interval_ms : UInt32 = <span class="t">DEFAULT_HEARTBEAT_INTERVAL_MS</span>, reconnect_after_ms : UInt32 -> UInt32 = <span class="t">DEFAULT_RECONNECT_AFTER_MS</span>, logger : String, String, JSON::Type -> ? = <span class="n">nil</span>, params = {} <span class="k">of</span> <span class="t">String</span> => <span class="t">String</span>)</a>
+<span class="k">end</span>, heartbeat_interval_ms : UInt32 = <span class="t">DEFAULT_HEARTBEAT_INTERVAL_MS</span>, reconnect_after_ms : UInt32 -> UInt32 = <span class="t">DEFAULT_RECONNECT_AFTER_MS</span>, logger : String, String, JSON::Any -> ? = <span class="n">nil</span>, params = {} <span class="k">of</span> <span class="t">String</span> => <span class="t">String</span>)</a>
         
           <div class="summary"><p>Create a socket with a provided host, path, port and tls state</p></div>
         
@@ -190,7 +210,7 @@ configuring the logger, and heartbeat.</p>
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#channel%28topic%3AString%2Cparams%3D%7B%7DofString%3D%3EJSON%3A%3AType%29%3AChannel-instance-method" class="signature"><strong>#channel</strong>(topic : String, params = {} <span class="k">of</span> <span class="t">String</span> => <span class="t">JSON</span><span class="t">::</span><span class="t">Type</span>) : Channel</a>
+        <a href="#channel%28topic%3AString%2Cparams%3D%7B%7DofString%3D%3EJSON%3A%3AAny%29%3AChannel-instance-method" class="signature"><strong>#channel</strong>(topic : String, params = {} <span class="k">of</span> <span class="t">String</span> => <span class="t">JSON</span><span class="t">::</span><span class="t">Any</span>) : Channel</a>
         
           <div class="summary"><p>Initiates a new channel for the given topic</p></div>
         
@@ -283,20 +303,20 @@ configuring the logger, and heartbeat.</p>
 
   <h2>Constructor Detail</h2>
   
-    <div class="entry-detail" id="new&#40;endpoint:URI|String,headers:HTTP::Headers&#61;HTTP::Headers.new,timeout:UInt32&#61;DEFAULT_TIMEOUT,encode:Message-&gt;String&#61;-&gt;&#40;msg:Message&#41;do
-Serializer.encode&#40;msg&#41;
-end,decode:String-&gt;Message&#61;-&gt;&#40;raw_msg:String&#41;do
-Serializer.decode&#40;raw_msg&#41;
-end,heartbeat_interval_ms:UInt32&#61;DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_after_ms:UInt32-&gt;UInt32&#61;DEFAULT_RECONNECT_AFTER_MS,logger:String,String,JSON::Type-&gt;?&#61;nil,params&#61;&#123;&#125;ofString&#61;&gt;String&#41;-class-method">
+    <div class="entry-detail" id="new(endpoint:URI|String,headers:HTTP::Headers=HTTP::Headers.new,timeout:UInt32=DEFAULT_TIMEOUT,encode:Message-&gt;String=-&gt;(msg:Message)do
+Serializer.encode(msg)
+end,decode:String-&gt;Message=-&gt;(raw_msg:String)do
+Serializer.decode(raw_msg)
+end,heartbeat_interval_ms:UInt32=DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_after_ms:UInt32-&gt;UInt32=DEFAULT_RECONNECT_AFTER_MS,logger:String,String,JSON::Any-&gt;?=nil,params={}ofString=&gt;String)-class-method">
       <div class="signature">
         
         def self.<strong>new</strong>(endpoint : URI | String, headers : HTTP::Headers = <span class="t">HTTP</span><span class="t">::</span><span class="t">Headers</span>.<span class="k">new</span>, timeout : UInt32 = <span class="t">DEFAULT_TIMEOUT</span>, encode : Message -> String = ->(msg : <span class="t">Message</span>) <span class="k">do</span>
   <span class="t">Serializer</span>.encode(msg)
 <span class="k">end</span>, decode : String -> Message = ->(raw_msg : <span class="t">String</span>) <span class="k">do</span>
   <span class="t">Serializer</span>.decode(raw_msg)
-<span class="k">end</span>, heartbeat_interval_ms : UInt32 = <span class="t">DEFAULT_HEARTBEAT_INTERVAL_MS</span>, reconnect_after_ms : UInt32 -> UInt32 = <span class="t">DEFAULT_RECONNECT_AFTER_MS</span>, logger : String, String, JSON::Type -> ? = <span class="n">nil</span>, params = {} <span class="k">of</span> <span class="t">String</span> => <span class="t">String</span>)
+<span class="k">end</span>, heartbeat_interval_ms : UInt32 = <span class="t">DEFAULT_HEARTBEAT_INTERVAL_MS</span>, reconnect_after_ms : UInt32 -> UInt32 = <span class="t">DEFAULT_RECONNECT_AFTER_MS</span>, logger : String, String, JSON::Any -> ? = <span class="n">nil</span>, params = {} <span class="k">of</span> <span class="t">String</span> => <span class="t">String</span>)
 
-        <a class="method-permalink" href="#new%28endpoint%3AURI%7CString%2Cheaders%3AHTTP%3A%3AHeaders%3DHTTP%3A%3AHeaders.new%2Ctimeout%3AUInt32%3DDEFAULT_TIMEOUT%2Cencode%3AMessage-%3EString%3D-%3E%28msg%3AMessage%29do%0ASerializer.encode%28msg%29%0Aend%2Cdecode%3AString-%3EMessage%3D-%3E%28raw_msg%3AString%29do%0ASerializer.decode%28raw_msg%29%0Aend%2Cheartbeat_interval_ms%3AUInt32%3DDEFAULT_HEARTBEAT_INTERVAL_MS%2Creconnect_after_ms%3AUInt32-%3EUInt32%3DDEFAULT_RECONNECT_AFTER_MS%2Clogger%3AString%2CString%2CJSON%3A%3AType-%3E%3F%3Dnil%2Cparams%3D%7B%7DofString%3D%3EString%29-class-method">#</a>
+        <a class="method-permalink" href="#new%28endpoint%3AURI%7CString%2Cheaders%3AHTTP%3A%3AHeaders%3DHTTP%3A%3AHeaders.new%2Ctimeout%3AUInt32%3DDEFAULT_TIMEOUT%2Cencode%3AMessage-%3EString%3D-%3E%28msg%3AMessage%29do%0ASerializer.encode%28msg%29%0Aend%2Cdecode%3AString-%3EMessage%3D-%3E%28raw_msg%3AString%29do%0ASerializer.decode%28raw_msg%29%0Aend%2Cheartbeat_interval_ms%3AUInt32%3DDEFAULT_HEARTBEAT_INTERVAL_MS%2Creconnect_after_ms%3AUInt32-%3EUInt32%3DDEFAULT_RECONNECT_AFTER_MS%2Clogger%3AString%2CString%2CJSON%3A%3AAny-%3E%3F%3Dnil%2Cparams%3D%7B%7DofString%3D%3EString%29-class-method">#</a>
       </div>
       
         <div class="doc"><p>Create a socket with a provided endpoint URI or string</p>
@@ -310,25 +330,25 @@ end,heartbeat_interval_ms:UInt32&#61;DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_aft
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/3eca5e1b03827609576fc7de0ac5010228093f89/src/phoenix/socket.cr#L51" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f11fc298c5fd3bbaa69c6a661ad2088e08894afc/src/phoenix/socket.cr#L51" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="new&#40;host:String&#61;&amp;quot;localhost&amp;quot;,path:String&#61;&amp;quot;/socket&amp;quot;,port:Int32?&#61;4000,tls:Bool&#61;false,headers:HTTP::Headers&#61;HTTP::Headers.new,timeout:UInt32&#61;DEFAULT_TIMEOUT,encode:Message-&gt;String&#61;-&gt;&#40;msg:Message&#41;do
-Serializer.encode&#40;msg&#41;
-end,decode:String-&gt;Message&#61;-&gt;&#40;raw_msg:String&#41;do
-Serializer.decode&#40;raw_msg&#41;
-end,heartbeat_interval_ms:UInt32&#61;DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_after_ms:UInt32-&gt;UInt32&#61;DEFAULT_RECONNECT_AFTER_MS,logger:String,String,JSON::Type-&gt;?&#61;nil,params&#61;&#123;&#125;ofString&#61;&gt;String&#41;-class-method">
+    <div class="entry-detail" id="new(host:String=&amp;quot;localhost&amp;quot;,path:String=&amp;quot;/socket&amp;quot;,port:Int32?=4000,tls:Bool=false,headers:HTTP::Headers=HTTP::Headers.new,timeout:UInt32=DEFAULT_TIMEOUT,encode:Message-&gt;String=-&gt;(msg:Message)do
+Serializer.encode(msg)
+end,decode:String-&gt;Message=-&gt;(raw_msg:String)do
+Serializer.decode(raw_msg)
+end,heartbeat_interval_ms:UInt32=DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_after_ms:UInt32-&gt;UInt32=DEFAULT_RECONNECT_AFTER_MS,logger:String,String,JSON::Any-&gt;?=nil,params={}ofString=&gt;String)-class-method">
       <div class="signature">
         
         def self.<strong>new</strong>(host : String = <span class="s">&quot;localhost&quot;</span>, path : String = <span class="s">&quot;/socket&quot;</span>, port : Int32? = <span class="n">4000</span>, tls : Bool = <span class="n">false</span>, headers : HTTP::Headers = <span class="t">HTTP</span><span class="t">::</span><span class="t">Headers</span>.<span class="k">new</span>, timeout : UInt32 = <span class="t">DEFAULT_TIMEOUT</span>, encode : Message -> String = ->(msg : <span class="t">Message</span>) <span class="k">do</span>
   <span class="t">Serializer</span>.encode(msg)
 <span class="k">end</span>, decode : String -> Message = ->(raw_msg : <span class="t">String</span>) <span class="k">do</span>
   <span class="t">Serializer</span>.decode(raw_msg)
-<span class="k">end</span>, heartbeat_interval_ms : UInt32 = <span class="t">DEFAULT_HEARTBEAT_INTERVAL_MS</span>, reconnect_after_ms : UInt32 -> UInt32 = <span class="t">DEFAULT_RECONNECT_AFTER_MS</span>, logger : String, String, JSON::Type -> ? = <span class="n">nil</span>, params = {} <span class="k">of</span> <span class="t">String</span> => <span class="t">String</span>)
+<span class="k">end</span>, heartbeat_interval_ms : UInt32 = <span class="t">DEFAULT_HEARTBEAT_INTERVAL_MS</span>, reconnect_after_ms : UInt32 -> UInt32 = <span class="t">DEFAULT_RECONNECT_AFTER_MS</span>, logger : String, String, JSON::Any -> ? = <span class="n">nil</span>, params = {} <span class="k">of</span> <span class="t">String</span> => <span class="t">String</span>)
 
-        <a class="method-permalink" href="#new%28host%3AString%3D%26quot%3Blocalhost%26quot%3B%2Cpath%3AString%3D%26quot%3B%2Fsocket%26quot%3B%2Cport%3AInt32%3F%3D4000%2Ctls%3ABool%3Dfalse%2Cheaders%3AHTTP%3A%3AHeaders%3DHTTP%3A%3AHeaders.new%2Ctimeout%3AUInt32%3DDEFAULT_TIMEOUT%2Cencode%3AMessage-%3EString%3D-%3E%28msg%3AMessage%29do%0ASerializer.encode%28msg%29%0Aend%2Cdecode%3AString-%3EMessage%3D-%3E%28raw_msg%3AString%29do%0ASerializer.decode%28raw_msg%29%0Aend%2Cheartbeat_interval_ms%3AUInt32%3DDEFAULT_HEARTBEAT_INTERVAL_MS%2Creconnect_after_ms%3AUInt32-%3EUInt32%3DDEFAULT_RECONNECT_AFTER_MS%2Clogger%3AString%2CString%2CJSON%3A%3AType-%3E%3F%3Dnil%2Cparams%3D%7B%7DofString%3D%3EString%29-class-method">#</a>
+        <a class="method-permalink" href="#new%28host%3AString%3D%26quot%3Blocalhost%26quot%3B%2Cpath%3AString%3D%26quot%3B%2Fsocket%26quot%3B%2Cport%3AInt32%3F%3D4000%2Ctls%3ABool%3Dfalse%2Cheaders%3AHTTP%3A%3AHeaders%3DHTTP%3A%3AHeaders.new%2Ctimeout%3AUInt32%3DDEFAULT_TIMEOUT%2Cencode%3AMessage-%3EString%3D-%3E%28msg%3AMessage%29do%0ASerializer.encode%28msg%29%0Aend%2Cdecode%3AString-%3EMessage%3D-%3E%28raw_msg%3AString%29do%0ASerializer.decode%28raw_msg%29%0Aend%2Cheartbeat_interval_ms%3AUInt32%3DDEFAULT_HEARTBEAT_INTERVAL_MS%2Creconnect_after_ms%3AUInt32-%3EUInt32%3DDEFAULT_RECONNECT_AFTER_MS%2Clogger%3AString%2CString%2CJSON%3A%3AAny-%3E%3F%3Dnil%2Cparams%3D%7B%7DofString%3D%3EString%29-class-method">#</a>
       </div>
       
         <div class="doc"><p>Create a socket with a provided host, path, port and tls state</p>
@@ -342,7 +362,7 @@ end,heartbeat_interval_ms:UInt32&#61;DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_aft
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/3eca5e1b03827609576fc7de0ac5010228093f89/src/phoenix/socket.cr#L88" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f11fc298c5fd3bbaa69c6a661ad2088e08894afc/src/phoenix/socket.cr#L88" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -354,12 +374,12 @@ end,heartbeat_interval_ms:UInt32&#61;DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_aft
 
   <h2>Instance Method Detail</h2>
   
-    <div class="entry-detail" id="channel&#40;topic:String,params&#61;&#123;&#125;ofString&#61;&gt;JSON::Type&#41;:Channel-instance-method">
+    <div class="entry-detail" id="channel(topic:String,params={}ofString=&gt;JSON::Any):Channel-instance-method">
       <div class="signature">
         
-        def <strong>channel</strong>(topic : String, params = {} <span class="k">of</span> <span class="t">String</span> => <span class="t">JSON</span><span class="t">::</span><span class="t">Type</span>) : <a href="../Phoenix/Channel.html">Channel</a>
+        def <strong>channel</strong>(topic : String, params = {} <span class="k">of</span> <span class="t">String</span> => <span class="t">JSON</span><span class="t">::</span><span class="t">Any</span>) : <a href="../Phoenix/Channel.html">Channel</a>
 
-        <a class="method-permalink" href="#channel%28topic%3AString%2Cparams%3D%7B%7DofString%3D%3EJSON%3A%3AType%29%3AChannel-instance-method">#</a>
+        <a class="method-permalink" href="#channel%28topic%3AString%2Cparams%3D%7B%7DofString%3D%3EJSON%3A%3AAny%29%3AChannel-instance-method">#</a>
       </div>
       
         <div class="doc"><p>Initiates a new channel for the given topic</p>
@@ -369,7 +389,7 @@ end,heartbeat_interval_ms:UInt32&#61;DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_aft
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/3eca5e1b03827609576fc7de0ac5010228093f89/src/phoenix/socket.cr#L257" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f11fc298c5fd3bbaa69c6a661ad2088e08894afc/src/phoenix/socket.cr#L255" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -387,7 +407,7 @@ end,heartbeat_interval_ms:UInt32&#61;DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_aft
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/3eca5e1b03827609576fc7de0ac5010228093f89/src/phoenix/socket.cr#L156" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f11fc298c5fd3bbaa69c6a661ad2088e08894afc/src/phoenix/socket.cr#L156" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -405,12 +425,12 @@ end,heartbeat_interval_ms:UInt32&#61;DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_aft
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/3eca5e1b03827609576fc7de0ac5010228093f89/src/phoenix/socket.cr#L243" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f11fc298c5fd3bbaa69c6a661ad2088e08894afc/src/phoenix/socket.cr#L241" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="disconnect&#40;callback:-&gt;?&#61;nil,reason:String?&#61;nil&#41;-instance-method">
+    <div class="entry-detail" id="disconnect(callback:-&gt;?=nil,reason:String?=nil)-instance-method">
       <div class="signature">
         
         def <strong>disconnect</strong>(callback :  -> ? = <span class="n">nil</span>, reason : String? = <span class="n">nil</span>)
@@ -421,12 +441,12 @@ end,heartbeat_interval_ms:UInt32&#61;DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_aft
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/3eca5e1b03827609576fc7de0ac5010228093f89/src/phoenix/socket.cr#L141" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f11fc298c5fd3bbaa69c6a661ad2088e08894afc/src/phoenix/socket.cr#L141" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="on_close&#40;&amp;block:String-&gt;&#41;-instance-method">
+    <div class="entry-detail" id="on_close(&amp;block:String-&gt;)-instance-method">
       <div class="signature">
         
         def <strong>on_close</strong>(&block : String -> )
@@ -437,18 +457,18 @@ end,heartbeat_interval_ms:UInt32&#61;DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_aft
         <div class="doc"><p>Registers callbacks for connection close events</p>
 
 <pre><code>socket.on_close <span class="k">do</span> <span class="o">|</span>raw_msg<span class="o">|</span>
-  puts <span class="s">&quot;close callback: </span><span class="i">#{</span></span>raw_msg<span class="s"><span class="i">}</span>&quot;</span>
+  puts <span class="s">&quot;close callback: </span><span class="i">#{</span>raw_msg<span class="i">}</span><span class="s">&quot;</span>
 <span class="k">end</span></code></pre></div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/3eca5e1b03827609576fc7de0ac5010228093f89/src/phoenix/socket.cr#L209" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f11fc298c5fd3bbaa69c6a661ad2088e08894afc/src/phoenix/socket.cr#L207" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="on_error&#40;&amp;block:String-&gt;&#41;-instance-method">
+    <div class="entry-detail" id="on_error(&amp;block:String-&gt;)-instance-method">
       <div class="signature">
         
         def <strong>on_error</strong>(&block : String -> )
@@ -459,18 +479,18 @@ end,heartbeat_interval_ms:UInt32&#61;DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_aft
         <div class="doc"><p>Registers callbacks for connection error events</p>
 
 <pre><code>socket.on_error <span class="k">do</span> <span class="o">|</span>raw_msg<span class="o">|</span>
-  puts <span class="s">&quot;error callback: </span><span class="i">#{</span></span>raw_msg<span class="s"><span class="i">}</span>&quot;</span>
+  puts <span class="s">&quot;error callback: </span><span class="i">#{</span>raw_msg<span class="i">}</span><span class="s">&quot;</span>
 <span class="k">end</span></code></pre></div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/3eca5e1b03827609576fc7de0ac5010228093f89/src/phoenix/socket.cr#L220" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f11fc298c5fd3bbaa69c6a661ad2088e08894afc/src/phoenix/socket.cr#L218" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="on_message&#40;&amp;block:String-&gt;&#41;-instance-method">
+    <div class="entry-detail" id="on_message(&amp;block:String-&gt;)-instance-method">
       <div class="signature">
         
         def <strong>on_message</strong>(&block : String -> )
@@ -481,18 +501,18 @@ end,heartbeat_interval_ms:UInt32&#61;DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_aft
         <div class="doc"><p>Registers callbacks for connection message events</p>
 
 <pre><code>socket.on_message <span class="k">do</span> <span class="o">|</span>raw_msg<span class="o">|</span>
-  puts <span class="s">&quot;message callback: </span><span class="i">#{</span></span>raw_msg<span class="s"><span class="i">}</span>&quot;</span>
+  puts <span class="s">&quot;message callback: </span><span class="i">#{</span>raw_msg<span class="i">}</span><span class="s">&quot;</span>
 <span class="k">end</span></code></pre></div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/3eca5e1b03827609576fc7de0ac5010228093f89/src/phoenix/socket.cr#L231" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f11fc298c5fd3bbaa69c6a661ad2088e08894afc/src/phoenix/socket.cr#L229" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="on_open&#40;&amp;block:-&gt;&#41;-instance-method">
+    <div class="entry-detail" id="on_open(&amp;block:-&gt;)-instance-method">
       <div class="signature">
         
         def <strong>on_open</strong>(&block :  -> )
@@ -509,12 +529,12 @@ end,heartbeat_interval_ms:UInt32&#61;DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_aft
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/3eca5e1b03827609576fc7de0ac5010228093f89/src/phoenix/socket.cr#L198" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f11fc298c5fd3bbaa69c6a661ad2088e08894afc/src/phoenix/socket.cr#L196" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="remove&#40;channel:Channel&#41;-instance-method">
+    <div class="entry-detail" id="remove(channel:Channel)-instance-method">
       <div class="signature">
         
         def <strong>remove</strong>(channel : <a href="../Phoenix/Channel.html">Channel</a>)
@@ -527,7 +547,7 @@ end,heartbeat_interval_ms:UInt32&#61;DEFAULT_HEARTBEAT_INTERVAL_MS,reconnect_aft
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/3eca5e1b03827609576fc7de0ac5010228093f89/src/phoenix/socket.cr#L248" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f11fc298c5fd3bbaa69c6a661ad2088e08894afc/src/phoenix/socket.cr#L246" target="_blank">View source</a>]
         
       </div>
     </div>

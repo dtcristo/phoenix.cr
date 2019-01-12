@@ -1,24 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Crystal Docs 0.27.0">
+
+
+<link href="css/style.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="js/doc.js"></script>
+<script type="text/javascript">
+  CrystalDoc.base_path = "";
+</script>
+
   <meta id="repository-name" content="github.com/dtcristo/phoenix.cr">
-  <link href="css/style.css" rel="stylesheet" type="text/css" />
-  <script type="text/javascript" src="js/doc.js"></script>
   <title>README - github.com/dtcristo/phoenix.cr</title>
 </head>
 <body>
 
-<div id="types-list">
-  <div id="search-box">
-    <input type="search" id="search-input" placeholder="Search...">
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="search-box">
+      <input type="search" class="search-input" placeholder="Search..." spellcheck="false" aria-label="Search">
+    </div>
+
+    <div class="repository-links">
+      <a href="index.html">README</a>
+    </div>
   </div>
 
-  <ul>
-    <li class="current"><a href="index.html">README</a></li>
-  </ul>
+  <div class="search-results" class="hidden">
+    <ul class="search-list"></ul>
+  </div>
 
-  <ul>
+  <div class="types-list">
+    <ul>
   
   <li class="parent " data-id="github.com/dtcristo/phoenix.cr/Phoenix" data-name="phoenix">
       <a href="Phoenix.html">Phoenix</a>
@@ -52,9 +68,11 @@
   
 </ul>
 
+  </div>
 </div>
 
-<div id="main-content">
+
+<div class="main-content">
 <h1>phoenix.cr</h1>
 
 <p>Crystal client for <a href="http://phoenixframework.org/" target="_blank">Phoenix</a> <a href="https://hexdocs.pm/phoenix/channels.html" target="_blank">Channels</a>, based off the official JavaScript <a href="https://github.com/phoenixframework/phoenix/blob/5ec246543e0950e10eab52aba333b644767c885e/assets/js/phoenix.js" target="_blank">reference implementation</a>.</p>
@@ -65,7 +83,7 @@
 
 <p>Add this to your application's <code>shard.yml</code>:</p>
 
-<pre><code class='language-yaml'>dependencies:
+<pre><code class="language-yaml">dependencies:
   phoenix:
     github: dtcristo/phoenix.cr</code></pre>
 
@@ -73,23 +91,23 @@
 
 <p>The example below shows basic usage; connecting to a socket, joining a channel, binding to an event and sending messages.</p>
 
-<pre><code class='language-crystal'><span class="k">require</span> <span class="s">&quot;phoenix&quot;</span>
+<pre><code class="language-crystal"><span class="k">require</span> <span class="s">&quot;phoenix&quot;</span>
 
 <span class="c"># Create socket and connect to it</span>
 socket <span class="o">=</span> <span class="t">Phoenix</span><span class="t">::</span><span class="t">Socket</span>.<span class="k">new</span>(<span class="s">&quot;http://example.com/socket&quot;</span>)
-socket.connect()
+socket.connect
 
 <span class="c"># Initiate a channel, bind to an event and join</span>
 channel <span class="o">=</span> socket.channel(<span class="s">&quot;topic:subtopic&quot;</span>)
 channel.on <span class="s">&quot;event&quot;</span> <span class="k">do</span> <span class="o">|</span>payload<span class="o">|</span>
   <span class="c"># do stuff with payload</span>
 <span class="k">end</span>
-channel.join()
+channel.join
 
 <span class="c"># Start a loop and send a message down the channel every second</span>
 loop <span class="k">do</span>
   sleep <span class="n">1</span>
-  channel.push(<span class="s">&quot;new_msg&quot;</span>, { <span class="s">&quot;text&quot;</span> => <span class="s">&quot;Hello world&#33;&quot;</span>.<span class="k">as</span>(<span class="t">JSON</span><span class="t">::</span><span class="t">Type</span>) })
+  channel.push(<span class="s">&quot;new_msg&quot;</span>, <span class="t">JSON</span><span class="t">::</span><span class="t">Any</span>.<span class="k">new</span>({<span class="s">&quot;text&quot;</span> => <span class="t">JSON</span><span class="t">::</span><span class="t">Any</span>.<span class="k">new</span>(<span class="s">&quot;Hello world!&quot;</span>)}))
 <span class="k">end</span></code></pre>
 
 <p>The Phoenix Channels <a href="https://hexdocs.pm/phoenix/channels.html" target="_blank">docs</a> provide details on implementing sockets and channels on the server side. The phoenix.cr <a href="https://dtcristo.github.io/phoenix.cr/" target="_blank">docs</a> detail the client side API available for use in your Crystal application.</p>
@@ -100,14 +118,14 @@ loop <span class="k">do</span>
 
 <p>Start the <a href="https://github.com/dtcristo/phoenix-chat" target="_blank">phoenix-chat</a> server example:</p>
 
-<pre><code class='language-bash'>$ git clone https://github.com/dtcristo/phoenix-chat
-$ cd phoenix-chat
-$ mix deps.get
-$ mix phx.server</code></pre>
+<pre><code class="language-sh">git clone https://github.com/dtcristo/phoenix-chat
+cd phoenix-chat
+mix deps.get
+mix phx.server</code></pre>
 
 <p>Run the chat client:</p>
 
-<pre><code class='language-bash'>$ crystal examples/chat.cr</code></pre>
+<pre><code class="language-sh">crystal examples/chat.cr</code></pre>
 
 <p>Follow the prompts to enter your name and chat away.</p>
 

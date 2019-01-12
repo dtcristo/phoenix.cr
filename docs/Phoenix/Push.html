@@ -1,24 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Crystal Docs 0.27.0">
+
+
+<link href="../css/style.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="../js/doc.js"></script>
+<script type="text/javascript">
+  CrystalDoc.base_path = "../";
+</script>
+
   <meta id="repository-name" content="github.com/dtcristo/phoenix.cr">
-  <link href="../css/style.css" rel="stylesheet" type="text/css" />
-  <script type="text/javascript" src="../js/doc.js"></script>
   <title>Phoenix::Push - github.com/dtcristo/phoenix.cr</title>
 </head>
 <body>
 
-<div id="types-list">
-  <div id="search-box">
-    <input type="search" id="search-input" placeholder="Search...">
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="search-box">
+      <input type="search" class="search-input" placeholder="Search..." spellcheck="false" aria-label="Search">
+    </div>
+
+    <div class="repository-links">
+      <a href="../index.html">README</a>
+    </div>
   </div>
 
-  <ul>
-    <li><a href="../index.html">README</a></li>
-  </ul>
+  <div class="search-results" class="hidden">
+    <ul class="search-list"></ul>
+  </div>
 
-  <ul>
+  <div class="types-list">
+    <ul>
   
   <li class="parent open current" data-id="github.com/dtcristo/phoenix.cr/Phoenix" data-name="phoenix">
       <a href="../Phoenix.html">Phoenix</a>
@@ -52,9 +68,11 @@
   
 </ul>
 
+  </div>
 </div>
 
-<div id="main-content">
+
+<div class="main-content">
 <h1 class="type-name">
 
   <span class="kind">class</span> Phoenix::Push
@@ -69,8 +87,8 @@
 
   <h2>Overview</h2>
 
-  <p>A <code><a href="../Phoenix/Push.html">Push</a></code> is returned from <code><a href="../Phoenix/Channel.html#join%28timeout%3AUInt32%3D%40timeout%29%3APush-instance-method">Channel#join</a></code>, <code><a href="../Phoenix/Channel.html#leave%28timeout%3D%40timeout%29%3APush-instance-method">Channel#leave</a></code> and <code><a href="../Phoenix/Channel.html#push%28event%3AString%2Cpayload%3AJSON%3A%3AType%3D%7B%7DofString%3D%3EJSON%3A%3AType%2Ctimeout%3AUInt32%3D%40timeout%29%3APush-instance-method">Channel#push</a></code>
-calls. Callbacks can be bound to server replies using <code><a href="../Phoenix/Push.html#receive%28status%3AString%2C%26block%3AJSON%3A%3AType-%3E%29%3APush-instance-method">#receive</a></code>.</p>
+  <p>A <code><a href="../Phoenix/Push.html">Push</a></code> is returned from <code><a href="../Phoenix/Channel.html#join%28timeout%3AUInt32%3D%40timeout%29%3APush-instance-method">Channel#join</a></code>, <code><a href="../Phoenix/Channel.html#leave%28timeout%3D%40timeout%29%3APush-instance-method">Channel#leave</a></code> and <code><a href="../Phoenix/Channel.html#push%28event%3AString%2Cpayload%3AJSON%3A%3AAny%3D%7B%7DofString%3D%3EJSON%3A%3AAny%2Ctimeout%3AUInt32%3D%40timeout%29%3APush-instance-method">Channel#push</a></code>
+calls. Callbacks can be bound to server replies using <code><a href="../Phoenix/Push.html#receive%28status%3AString%2C%26block%3AJSON%3A%3AAny-%3E%29%3APush-instance-method">#receive</a></code>.</p>
 
 
 
@@ -88,7 +106,9 @@ calls. Callbacks can be bound to server replies using <code><a href="../Phoenix/
   <h2>Defined in:</h2>
   
     
-      <a href="https://github.com/dtcristo/phoenix.cr/blob/3eca5e1b03827609576fc7de0ac5010228093f89/src/phoenix/push.cr#L4" target="_blank">phoenix/push.cr</a>
+      <a href="https://github.com/dtcristo/phoenix.cr/blob/f11fc298c5fd3bbaa69c6a661ad2088e08894afc/src/phoenix/push.cr#L4" target="_blank">
+        phoenix/push.cr
+      </a>
     
     <br/>
   
@@ -105,7 +125,7 @@ calls. Callbacks can be bound to server replies using <code><a href="../Phoenix/
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#receive%28status%3AString%2C%26block%3AJSON%3A%3AType-%3E%29%3APush-instance-method" class="signature"><strong>#receive</strong>(status : String, &block : JSON::Type -> ) : Push</a>
+        <a href="#receive%28status%3AString%2C%26block%3AJSON%3A%3AAny-%3E%29%3APush-instance-method" class="signature"><strong>#receive</strong>(status : String, &block : JSON::Any -> ) : Push</a>
         
           <div class="summary"><p>Register a callback for a push reply of a given status</p></div>
         
@@ -148,12 +168,12 @@ calls. Callbacks can be bound to server replies using <code><a href="../Phoenix/
 
   <h2>Instance Method Detail</h2>
   
-    <div class="entry-detail" id="receive&#40;status:String,&amp;block:JSON::Type-&gt;&#41;:Push-instance-method">
+    <div class="entry-detail" id="receive(status:String,&amp;block:JSON::Any-&gt;):Push-instance-method">
       <div class="signature">
         
-        def <strong>receive</strong>(status : String, &block : JSON::Type -> ) : <a href="../Phoenix/Push.html">Push</a>
+        def <strong>receive</strong>(status : String, &block : JSON::Any -> ) : <a href="../Phoenix/Push.html">Push</a>
 
-        <a class="method-permalink" href="#receive%28status%3AString%2C%26block%3AJSON%3A%3AType-%3E%29%3APush-instance-method">#</a>
+        <a class="method-permalink" href="#receive%28status%3AString%2C%26block%3AJSON%3A%3AAny-%3E%29%3APush-instance-method">#</a>
       </div>
       
         <div class="doc"><p>Register a callback for a push reply of a given status</p>
@@ -162,18 +182,18 @@ calls. Callbacks can be bound to server replies using <code><a href="../Phoenix/
 channel join push. This also works for general channel pushes (if
 configured on the server to reply).</p>
 
-<pre><code>channel.join()
+<pre><code>channel.join
   .receive <span class="s">&quot;ok&quot;</span> <span class="k">do</span> <span class="o">|</span>response<span class="o">|</span>
-    puts <span class="s">&quot;Joined successfully: </span><span class="i">#{</span></span>response<span class="s"><span class="i">}</span>&quot;</span>
+    puts <span class="s">&quot;Joined successfully: </span><span class="i">#{</span>response<span class="i">}</span><span class="s">&quot;</span>
   <span class="k">end</span>
   .receive <span class="s">&quot;error&quot;</span> <span class="k">do</span> <span class="o">|</span>response<span class="o">|</span>
-    puts <span class="s">&quot;Unable to join: </span><span class="i">#{</span></span>response<span class="s"><span class="i">}</span>&quot;</span>
+    puts <span class="s">&quot;Unable to join: </span><span class="i">#{</span>response<span class="i">}</span><span class="s">&quot;</span>
   <span class="k">end</span></code></pre></div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/dtcristo/phoenix.cr/blob/3eca5e1b03827609576fc7de0ac5010228093f89/src/phoenix/push.cr#L50" target="_blank">View source</a>]
+          [<a href="https://github.com/dtcristo/phoenix.cr/blob/f11fc298c5fd3bbaa69c6a661ad2088e08894afc/src/phoenix/push.cr#L50" target="_blank">View source</a>]
         
       </div>
     </div>
