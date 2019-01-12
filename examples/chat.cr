@@ -2,7 +2,7 @@ require "../src/phoenix"
 require "colorize"
 
 # A custom logger proc for debugging socket and channel events
-logger = Proc(String, String, JSON::Type, Nil).new do |kind, log_msg, payload|
+logger = Proc(String, String, JSON::Any, Nil).new do |kind, log_msg, payload|
   log = if payload.nil? || payload == ""
           "#{kind}: #{log_msg}"
         else
@@ -20,11 +20,10 @@ puts "What's your name?"
 name = gets
 
 # Initiate the "chat:lobby" channel providing "name" param
-channel = socket.channel("chat:lobby", {"name" => name.as(JSON::Type)})
+channel = socket.channel("chat:lobby", JSON::Any.new({"name" => JSON::Any.new(name)}))
 
 # Bind to inbound "new_msg" events, parse as JSON and print the payload
 channel.on "new_msg" do |payload|
-  payload = JSON::Any.new(payload)
   puts "#{payload["name"]?} says: #{payload["text"]?}"
 end
 
@@ -40,5 +39,5 @@ channel.join
 # Start a loop reading user input, and sending it down the channel
 loop do
   input = gets
-  channel.push("new_msg", {"text" => input.as(JSON::Type)})
+  channel.push("new_msg", JSON::Any.new({"text" => JSON::Any.new(input)}))
 end

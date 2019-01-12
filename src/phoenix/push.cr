@@ -9,9 +9,9 @@ module Phoenix
     @received_resp : JSON::Any?
 
     # :nodoc:
-    protected def initialize(@channel : Channel, @event : String, payload : JSON::Type, @timeout : UInt32)
+    protected def initialize(@channel : Channel, @event : String, payload : JSON::Any, @timeout : UInt32)
       @payload = payload
-      @receive_hooks = [] of NamedTuple(status: String, callback: JSON::Type ->)
+      @receive_hooks = [] of NamedTuple(status: String, callback: JSON::Any ->)
       @sent = false
     end
 
@@ -47,9 +47,9 @@ module Phoenix
     #     puts "Unable to join: #{response}"
     #   end
     # ```
-    def receive(status : String, &block : JSON::Type ->) : Push
+    def receive(status : String, &block : JSON::Any ->) : Push
       if has_received?(status)
-        @received_resp.try { |resp| yield(resp["response"].raw.as(JSON::Type)) }
+        @received_resp.try { |resp| yield(JSON::Any.new(resp["response"].raw)) }
       end
       @receive_hooks << {status: status, callback: block}
       self
@@ -66,7 +66,7 @@ module Phoenix
     private def match_receive(payload : JSON::Any)
       @receive_hooks
         .select { |h| h[:status] == payload["status"]?.to_s }
-        .each(&.[:callback].call(payload["response"].raw.as(JSON::Type)))
+        .each(&.[:callback].call(JSON::Any.new(payload["response"].raw)))
     end
 
     private def cancel_ref_event
@@ -85,15 +85,15 @@ module Phoenix
       @ref = ref = @channel.socket.make_ref
       @ref_event = ref_event = @channel.reply_event_name(ref)
 
-      @channel.on ref_event do |payload|
+      @channel.on ref_event do |received_resp|
         cancel_ref_event()
         cancel_timeout()
-        @received_resp = received_resp = JSON::Any.new(payload)
+        @received_resp = received_resp
         match_receive(received_resp)
       end
 
       @timeout_timer = timeout_timer = Timer.new(
-        ->{ trigger("timeout", {} of String => JSON::Type) },
+        ->{ trigger("timeout", {} of String => JSON::Any) },
         @timeout
       )
       timeout_timer.schedule_timeout
@@ -109,10 +109,10 @@ module Phoenix
     protected def trigger(status, response)
       @channel.trigger(
         @ref_event,
-        {
-          "status"   => status.as(JSON::Type),
-          "response" => response.as(JSON::Type),
-        },
+        JSON::Any.new({
+          "status"   => JSON::Any.new(status),
+          "response" => JSON::Any.new(response),
+        }),
         @ref,
         nil
       )

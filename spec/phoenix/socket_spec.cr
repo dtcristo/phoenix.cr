@@ -28,10 +28,10 @@ module Phoenix
       it "overrides some defaults with options" do
         custom_timeout = 5000_u32
         custom_encode = ->(msg : Message) { "sample" }
-        custom_decode = ->(raw_msg : String) { Message.new("sample", "sample", nil.as(JSON::Type), nil, nil) }
+        custom_decode = ->(raw_msg : String) { Message.new("sample", "sample", JSON::Any.new(nil), nil, nil) }
         custom_heatbeat = 10_000_u32
         custom_reconnect = ->(tries : UInt32) { 10_000_u32 }
-        custom_logger = ->(kind : String, log_msg : String, payload : JSON::Type) {}
+        custom_logger = ->(kind : String, log_msg : String, payload : JSON::Any) {}
 
         socket = Socket.new(
           "https://example.com/sample/socket",

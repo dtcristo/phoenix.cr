@@ -30,7 +30,7 @@ module Phoenix
     DEFAULT_HEARTBEAT_INTERVAL_MS = 30_000_u32
     # Default reconnection timeout implements stepped backoff
     DEFAULT_RECONNECT_AFTER_MS = Proc(UInt32, UInt32).new do |tries|
-      [1000_u32, 2000_u32, 5000_u32, 10_000_u32].at(tries - 1) { 10_000_u32 }
+      [1000_u32, 2000_u32, 5000_u32, 10_000_u32].fetch(tries - 1) { 10_000_u32 }
     end
 
     # Create a socket with a provided endpoint URI or string
@@ -56,7 +56,7 @@ module Phoenix
       decode : String -> Message = ->(raw_msg : String) { Serializer.decode(raw_msg) },
       heartbeat_interval_ms : UInt32 = DEFAULT_HEARTBEAT_INTERVAL_MS,
       reconnect_after_ms : UInt32 -> UInt32 = DEFAULT_RECONNECT_AFTER_MS,
-      logger : (String, String, JSON::Type ->)? = nil,
+      logger : (String, String, JSON::Any ->)? = nil,
       params = {} of String => String
     )
       host, path, port, tls = parse_uri(endpoint)
@@ -96,7 +96,7 @@ module Phoenix
       @decode : String -> Message = ->(raw_msg : String) { Serializer.decode(raw_msg) },
       @heartbeat_interval_ms : UInt32 = DEFAULT_HEARTBEAT_INTERVAL_MS,
       @reconnect_after_ms : UInt32 -> UInt32 = DEFAULT_RECONNECT_AFTER_MS,
-      @logger : (String, String, JSON::Type ->)? = nil,
+      @logger : (String, String, JSON::Any ->)? = nil,
       @params = {} of String => String
     )
       @state_change_callbacks = {
@@ -182,8 +182,8 @@ module Phoenix
       on_conn_close(reason)
     end
 
-    protected def log(kind : String, msg : String, data : JSON::Type = nil.as(JSON::Type))
-      @logger.try(&.call(kind, msg, data.as(JSON::Type)))
+    protected def log(kind : String, msg : String, data : JSON::Any = JSON::Any.new(nil))
+      @logger.try(&.call(kind, msg, data))
     end
 
     # Registers callbacks for connection open events
@@ -252,7 +252,7 @@ module Phoenix
     # ```
     # channel = socket.channel("topic:subtopic")
     # ```
-    def channel(topic : String, params = {} of String => JSON::Type) : Channel
+    def channel(topic : String, params = {} of String => JSON::Any) : Channel
       chan = Channel.new(topic, params, self)
       chan.setup
       channels << chan
@@ -268,7 +268,7 @@ module Phoenix
     end
 
     private def on_conn_close(raw_msg : String)
-      log("transport", "close", data: raw_msg.as(JSON::Type))
+      log("transport", "close", data: JSON::Any.new(raw_msg))
       trigger_chan_error()
       @heartbeat_timer.reset
       @reconnect_timer.schedule_timeout
@@ -276,7 +276,7 @@ module Phoenix
     end
 
     private def on_conn_error(raw_msg : String)
-      log("transport", "error", data: raw_msg.as(JSON::Type))
+      log("transport", "error", data: JSON::Any.new(raw_msg))
       trigger_chan_error()
       @state_change_callbacks[:error].each(&.call(raw_msg))
     end
@@ -286,7 +286,7 @@ module Phoenix
       if msg.ref == @pending_heartbeat_ref
         @pending_heartbeat_ref = nil
       end
-      status = JSON::Any.new(msg.payload)["status"]?
+      status = msg.payload["status"]?
       ref = msg.ref
       log("receive", "#{status && "#{status} "}#{msg.topic} #{msg.event}#{ref && " (#{ref})"}", data: msg.payload)
       @channels
@@ -303,7 +303,7 @@ module Phoenix
       @channels.each do |channel|
         channel.trigger(
           Channel::EVENTS[:error],
-          {} of String => JSON::Type,
+          JSON::Any.new({} of String => JSON::Any),
           nil,
           nil
         )
@@ -341,7 +341,7 @@ module Phoenix
       push(Message.new(
         "phoenix",
         "heartbeat",
-        {} of String => JSON::Type,
+        JSON::Any.new({} of String => JSON::Any),
         @pending_heartbeat_ref,
         nil
       ))

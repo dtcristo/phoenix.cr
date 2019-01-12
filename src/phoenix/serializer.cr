@@ -18,7 +18,7 @@ module Phoenix
       Message.new(
         json[2].as_s,
         json[3].as_s,
-        json[4].raw,
+        JSON::Any.new(json[4].raw),
         json[1].as_s?,
         json[0].as_s?
       )
