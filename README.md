@@ -1,8 +1,16 @@
-# phoenix.cr
+<div align="center">
+  <h1>phoenix.cr</h1>
+  <p>
+    <strong>
+      Crystal client for <a href="http://phoenixframework.org/">Phoenix</a> <a href="https://hexdocs.pm/phoenix/channels.html">Channels</a>
+    </strong>
+  </p>
+  <h3>
+    <a href="https://dtcristo.github.io/phoenix.cr/">API Docs</a>
+  </h3>
+</div>
 
-Crystal client for [Phoenix](http://phoenixframework.org/) [Channels](https://hexdocs.pm/phoenix/channels.html), based off the official JavaScript [reference implementation](https://github.com/phoenixframework/phoenix/blob/5ec246543e0950e10eab52aba333b644767c885e/assets/js/phoenix.js).
-
-API documentation available [here](https://dtcristo.github.io/phoenix.cr/).
+Based off the original JavaScript [reference implementation](https://github.com/phoenixframework/phoenix/blob/5ec246543e0950e10eab52aba333b644767c885e/assets/js/phoenix.js).
 
 ## Installation
 
