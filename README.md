@@ -10,8 +10,6 @@
   </h3>
 </div>
 
-Based off the original JavaScript [reference implementation](https://github.com/phoenixframework/phoenix/blob/5ec246543e0950e10eab52aba333b644767c885e/assets/js/phoenix.js).
-
 ## Installation
 
 Add this to your application's `shard.yml`:
@@ -82,4 +80,4 @@ Follow the prompts to enter your name and chat away.
 
 ## Credits
 
-- Thanks [chrismccord](https://github.com/chrismccord) and the [Phoenix team](https://github.com/phoenixframework/phoenix/graphs/contributors) for building an amazing web framework.
+- Thanks [chrismccord](https://github.com/chrismccord) and the [Phoenix team](https://github.com/phoenixframework/phoenix/graphs/contributors) for building an amazing web framework. This implementation is based off the original JavaScript [reference implementation](https://github.com/phoenixframework/phoenix/blob/5ec246543e0950e10eab52aba333b644767c885e/assets/js/phoenix.js).
