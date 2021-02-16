@@ -2,7 +2,7 @@
   <h1>phoenix.cr</h1>
   <p>
     <strong>
-      Crystal client for <a href="http://phoenixframework.org/">Phoenix</a> <a href="https://hexdocs.pm/phoenix/channels.html">Channels</a>
+      <a href="http://phoenixframework.org/">Phoenix</a> <a href="https://hexdocs.pm/phoenix/channels.html">Channels</a> client in Crystal
     </strong>
   </p>
   <h3>
@@ -68,9 +68,9 @@ crystal examples/chat.cr
 
 Follow the prompts to enter your name and chat away.
 
-## TODO
+## Todo
 
-- Add tests
+- Improve test coverage
 - Implement Presence
 - Build larger example application
 
