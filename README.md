@@ -2,7 +2,7 @@
   <h1>phoenix.cr</h1>
   <p>
     <strong>
-      <a href="http://phoenixframework.org/">Phoenix</a> <a href="https://hexdocs.pm/phoenix/channels.html">Channels</a> client in Crystal
+      <a href="http://phoenixframework.org/">Phoenix</a> <a href="https://hexdocs.pm/phoenix/channels.html">Channels</a> client for Crystal
     </strong>
   </p>
   <h3>
